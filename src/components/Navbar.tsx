@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Monitor, ShoppingCart, BookOpen, MessageSquare, Cpu, User, LogOut, LayoutDashboard, Hammer, Box, Sparkles, Package } from 'lucide-react';
+import { Monitor, ShoppingCart, BookOpen, MessageSquare, Cpu, User, LogOut, LayoutDashboard, Hammer, Box, Sparkles, Package, Sun, Moon } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -16,6 +17,7 @@ interface NavbarProps {
 
 export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarProps) {
   const { user, profile, setAuthModalOpen, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const isAdminOrOwner = profile?.role === 'admin' || profile?.role === 'owner';
 
@@ -43,14 +45,14 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-black/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div 
           className="flex cursor-pointer items-center gap-2" 
           onClick={() => setActiveTab('home')}
         >
           <Cpu className="h-8 w-8 text-emerald-500" />
-          <span className="text-xl font-bold tracking-tighter text-white">PC MASTER</span>
+          <span className="text-xl font-bold tracking-tighter text-zinc-900 dark:text-white">PC MASTER</span>
         </div>
 
         <div className="hidden items-center gap-6 lg:flex">
@@ -60,7 +62,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
               onClick={() => setActiveTab(item.id)}
               className={cn(
                 "flex items-center gap-2 text-sm font-medium transition-colors hover:text-emerald-400",
-                activeTab === item.id ? "text-emerald-500" : "text-zinc-400"
+                activeTab === item.id ? "text-emerald-500" : "text-zinc-500 dark:text-zinc-400"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -75,13 +77,21 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
         </div>
 
         <div className="flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 text-zinc-500 dark:text-zinc-400 hover:text-emerald-500 transition-colors bg-zinc-100 dark:bg-white/5 rounded-xl border border-zinc-200 dark:border-white/10"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+
           {user ? (
             <div className="flex items-center gap-4">
               <div className="hidden md:flex flex-col items-end">
                 <div className="flex items-center gap-2">
                   {profile?.role === 'owner' && <span className="text-[8px] bg-purple-500/20 text-purple-500 px-1.5 py-0.5 rounded-full font-bold uppercase">Owner</span>}
                   {profile?.role === 'admin' && <span className="text-[8px] bg-blue-500/20 text-blue-500 px-1.5 py-0.5 rounded-full font-bold uppercase">Admin</span>}
-                  <span className="text-xs font-bold text-white leading-none">{profile?.displayName || user.displayName || 'User'}</span>
+                  <span className="text-xs font-bold text-zinc-900 dark:text-white leading-none">{profile?.displayName || user.displayName || 'User'}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[10px] text-zinc-500 leading-none">{user.email}</span>
@@ -97,7 +107,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
               </div>
               <button 
                 onClick={() => signOut()}
-                className="p-2 text-zinc-400 hover:text-red-400 transition-colors"
+                className="p-2 text-zinc-500 dark:text-zinc-400 hover:text-red-400 transition-colors"
                 title="Sign Out"
               >
                 <LogOut className="h-5 w-5" />
@@ -107,7 +117,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
             <div className="flex items-center gap-2 sm:gap-4">
               <button
                 onClick={() => setAuthModalOpen(true, 'login')}
-                className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors px-2 py-1"
+                className="text-xs sm:text-sm font-bold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors px-2 py-1"
               >
                 Sign In
               </button>
@@ -127,7 +137,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
           <div className="flex items-center gap-4 lg:hidden">
             <button 
               onClick={() => setActiveTab('shop')}
-              className="relative text-zinc-400"
+              className="relative text-zinc-500 dark:text-zinc-400"
             >
               <ShoppingCart className="h-6 w-6" />
               {cartCount > 0 && (

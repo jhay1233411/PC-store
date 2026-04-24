@@ -2,17 +2,15 @@ import { GoogleGenAI } from "@google/genai";
 import { PRODUCTS } from "../constants";
 
 const getApiKey = () => {
-  const metaEnv = (import.meta as any).env || {};
-
-  const key =
-    metaEnv?.GEMINI_API_KEY?.trim() ||
-    metaEnv?.VITE_GEMINI_API_KEY?.trim() ||
-    metaEnv?.VITE_OTHER_API_KEY?.trim();
-
-  return key ?? "";
+  // Priority 1: Standard platform key
+  if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
+  // Priority 2: User provided key from .env.example suggestion
+  const metaEnv = (import.meta as any).env;
+  if (metaEnv?.VITE_OTHER_API_KEY) return metaEnv.VITE_OTHER_API_KEY;
+  return "";
 };
 
-const createAiClient = (apiKey: string) => new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: getApiKey() });
 
 const SHOP_CATALOG = PRODUCTS.map(p => 
   `- ${p.name} (${p.category}): ₱${p.price.toLocaleString()}${p.socket ? `, Socket: ${p.socket}` : ''}${p.ramType ? `, RAM: ${p.ramType}` : ''}${p.wattage ? `, Wattage: ${p.wattage}W` : ''}. Description: ${p.description}`
@@ -44,9 +42,8 @@ export const getGeminiResponse = async (
 
     contents.push({ role: "user", parts: userParts });
 
-    const ai = createAiClient(apiKey);
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-3-flash-preview",
       contents,
       config: {
         systemInstruction: `You are a PC building expert assistant in the year 2026. 
@@ -89,7 +86,7 @@ GUIDELINES:
     }
 
     if (errorMessage.includes("permission") || errorStatus === "PERMISSION_DENIED" || errorMessage.includes("403")) {
-      return "The AI Assistant does not have permission to use this model with the current API key. Please enable the 'Generative Language API' in your Google Cloud Console or switch to a supported Gemini model like Gemini 1.5 Flash.";
+      return "The AI Assistant does not have permission to use this model with the current API key. Ensure the 'Generative Language API' is enabled in your Google Cloud Console.";
     }
 
     return "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later.";

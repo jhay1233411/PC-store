@@ -13,10 +13,12 @@ import AISupport from './components/AISupport';
 import AuthModal from './components/AuthModal';
 import { Product, PCBuild } from './types';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 
 function AppContent() {
   const { isAuthModalOpen, setAuthModalOpen } = useAuth();
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
   const [cart, setCart] = useState<Product[]>([]);
   const [editingBuild, setEditingBuild] = useState<PCBuild['components'] | undefined>(undefined);
@@ -59,7 +61,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-emerald-500/30 selection:text-emerald-500">
+    <div className="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-white transition-colors duration-300 selection:bg-emerald-500/30 selection:text-emerald-500">
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={handleTabChange} 
@@ -85,9 +87,11 @@ function AppContent() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

@@ -153,12 +153,12 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
   const isAdminOrOwner = profile?.role === 'admin' || profile?.role === 'owner';
 
   return (
-    <div className="bg-black min-h-screen py-12 relative overflow-hidden">
+    <div className="bg-white dark:bg-black min-h-screen py-12 relative overflow-hidden transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h2 className="text-3xl font-bold text-white tracking-tight">Component Shop</h2>
-            <p className="text-zinc-400 mt-2">Premium parts for your next masterpiece.</p>
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Component Shop</h2>
+            <p className="text-zinc-500 dark:text-zinc-400 mt-2">Premium parts for your next masterpiece.</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -169,8 +169,16 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-zinc-900 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 w-full sm:w-48 transition-all"
+                className="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl py-2 pl-10 pr-10 text-zinc-900 dark:text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 w-full sm:w-48 transition-all"
               />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-zinc-200 dark:hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={14} className="text-zinc-400 hover:text-emerald-500" />
+                </button>
+              )}
             </div>
             
             <button
