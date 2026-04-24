@@ -46,7 +46,7 @@ export const getGeminiResponse = async (
 
     const ai = createAiClient(apiKey);
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents,
       config: {
         systemInstruction: `You are a PC building expert assistant in the year 2026. 
@@ -89,7 +89,7 @@ GUIDELINES:
     }
 
     if (errorMessage.includes("permission") || errorStatus === "PERMISSION_DENIED" || errorMessage.includes("403")) {
-      return "The AI Assistant does not have permission to use this model with the current API key. Ensure the 'Generative Language API' is enabled in your Google Cloud Console.";
+      return "The AI Assistant does not have permission to use this model with the current API key. Please enable the 'Generative Language API' in your Google Cloud Console or switch to a supported Gemini model like Gemini 1.5 Flash.";
     }
 
     return "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later.";
