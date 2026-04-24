@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'jhaysonjhay15@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'owner'])
+      );
+    }
+    
+    function isSuperOwner() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'jhaysonjhay15@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner')
+      );
+    }
+
+    function isValidReview(data) {
+      return data.keys().hasAll(['productId', 'userId', 'userName', 'rating', 'comment', 'createdAt']) &&
+             data.keys().size() == 6 &&
+             data.productId is string && data.productId.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.userName is string && data.userName.size() <= 100 &&
+             (data.rating is int || data.rating is float) && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() <= 2000 &&
+             data.createdAt is string;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    
+    match /users/{userId} {
+      allow get: if request.auth != null && request.auth.uid == userId;
+      allow get, list: if isAdmin();
+      allow create: if request.auth != null && request.auth.uid == userId && (
+        !('role' in request.resource.data) || request.resource.data.role == 'customer'
+      );
+      allow update: if isAuthenticated() && (
+        (isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])) ||
+        isSuperOwner()
+      );
+    }
+    
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+      allow delete: if isSuperOwner();
+    }
+
+    match /pc_builds/{buildId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == (resource == null ? request.resource.data.userId : resource.data.userId) || isAdmin());
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        isValidReview(request.resource.data) && 
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && (
+        (resource.data.userId == request.auth.uid && (request.method == 'delete' || (isValidReview(request.resource.data) && request.resource.data.userId == resource.data.userId))) || 
+        isAdmin()
+      );
+    }
+  }
+}

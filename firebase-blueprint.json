@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "Stores user profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["customer", "admin", "owner"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "products": {
+      "title": "Product",
+      "description": "Stores product information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "image": { "type": "string" },
+        "description": { "type": "string" },
+        "stock": { "type": "number" }
+      },
+      "required": ["id", "name", "category", "price", "stock"]
+    },
+    "orders": {
+      "title": "Order",
+      "description": "Stores order information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "items": { "type": "array" },
+        "totalPrice": { "type": "number" },
+        "status": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "shippingAddress": {
+          "type": "object",
+          "properties": {
+            "fullName": { "type": "string" },
+            "phone": { "type": "string" },
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "province": { "type": "string" },
+            "zipCode": { "type": "string" }
+          }
+        },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "items", "totalPrice", "shippingAddress"]
+    },
+    "pc_builds": {
+      "title": "PC Build",
+      "description": "Stores user saved PC configurations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "components": { "type": "object" },
+        "totalPrice": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "components", "totalPrice"]
+    },
+    "reviews": {
+      "title": "Product Review",
+      "description": "Stores user reviews and ratings for products",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "userId", "userName", "rating", "comment"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "Individual user profile documents"
+    },
+    "/products/{productId}": {
+      "schema": "products",
+      "description": "Product documents"
+    },
+    "/orders/{orderId}": {
+      "schema": "orders",
+      "description": "Order documents"
+    },
+    "/pc_builds/{buildId}": {
+      "schema": "pc_builds",
+      "description": "User saved PC configurations"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "reviews",
+      "description": "Product ratings and reviews"
+    }
+  }
+}
