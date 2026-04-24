@@ -81,11 +81,11 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
     : 0;
 
   return (
-    <div className="mt-8 pt-8 border-t border-white/10">
+    <div className="mt-8 pt-8 border-t border-zinc-100 dark:border-white/10 transition-colors duration-300">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <MessageSquare className="text-emerald-500" />
+          <h3 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <MessageSquare className="text-emerald-600 dark:text-emerald-500" />
             Reviews & Ratings
           </h3>
           <p className="text-sm text-zinc-500 mt-1">Share your experience with {productName}</p>
@@ -95,7 +95,7 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
           <div className="text-right">
             <div className="flex items-center gap-1 justify-end">
               <Star className="text-amber-400 fill-amber-400" size={20} />
-              <span className="text-2xl font-bold text-white">{averageRating}</span>
+              <span className="text-2xl font-bold text-zinc-900 dark:text-white">{averageRating}</span>
             </div>
             <p className="text-xs text-zinc-500">{reviews.length} total reviews</p>
           </div>
@@ -103,7 +103,7 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
       </div>
 
       {/* Review Form */}
-      <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
+      <form onSubmit={handleSubmit} className="bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 mb-8 shadow-sm dark:shadow-none">
         <div className="flex items-center gap-4 mb-4">
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -117,12 +117,12 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
               >
                 <Star
                   size={24}
-                  className={star <= (hoveredRating || rating) ? 'text-amber-400 fill-amber-400' : 'text-zinc-600'}
+                  className={star <= (hoveredRating || rating) ? 'text-amber-400 fill-amber-400' : 'text-zinc-300 dark:text-zinc-600'}
                 />
               </button>
             ))}
           </div>
-          <span className="text-sm font-bold text-zinc-400">
+          <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">
             {rating === 5 ? 'Excellent!' : rating === 4 ? 'Great' : rating === 3 ? 'Good' : rating === 2 ? 'Fair' : 'Poor'}
           </span>
         </div>
@@ -133,18 +133,18 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
             onChange={(e) => setComment(e.target.value)}
             placeholder={`What do you think about the ${productName}?`}
             rows={3}
-            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all resize-none"
+            className="w-full bg-white dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all resize-none shadow-inner"
           />
         </div>
 
         <div className="flex justify-between items-center mt-4">
-          <p className="text-[10px] text-zinc-500 max-w-[200px]">
+          <p className="text-[10px] text-zinc-500 max-w-[200px] leading-tight">
              Keep it civil and focus on performance, noise, and temperatures.
           </p>
           <button
             type="submit"
             disabled={isSubmitting || !comment.trim()}
-            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-6 py-2 rounded-xl transition-all disabled:opacity-50"
+            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-black px-6 py-2 rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/10 active:scale-95 italic uppercase tracking-tighter"
           >
             {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
             Post Review
@@ -160,8 +160,8 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
             <p className="text-zinc-500 text-sm italic">Gathering user feedback...</p>
           </div>
         ) : reviews.length === 0 ? (
-          <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
-            <AlertTriangle className="mx-auto text-zinc-700 mb-3" size={32} />
+          <div className="py-12 text-center border-2 border-dashed border-zinc-200 dark:border-white/5 rounded-2xl">
+            <AlertTriangle className="mx-auto text-zinc-300 dark:text-zinc-700 mb-3" size={32} />
             <p className="text-zinc-500 font-medium italic">No reviews yet. Be the first to rate it!</p>
           </div>
         ) : (
@@ -172,15 +172,15 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-zinc-900/50 border border-white/5 rounded-2xl p-5 hover:bg-zinc-900 transition-colors group"
+                className="bg-white dark:bg-zinc-900/50 border border-zinc-100 dark:border-white/5 rounded-2xl p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors group shadow-sm dark:shadow-none"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                      <User className="text-emerald-500" size={20} />
+                    <div className="h-10 w-10 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center border border-emerald-500/20">
+                      <User className="text-emerald-600 dark:text-emerald-500" size={20} />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white leading-none">{review.userName}</h4>
+                      <h4 className="text-sm font-black text-zinc-900 dark:text-white leading-none italic uppercase tracking-tighter">{review.userName}</h4>
                       <p className="text-[10px] text-zinc-500 mt-1">
                         {new Date(review.createdAt).toLocaleDateString(undefined, { 
                           year: 'numeric', 
@@ -195,20 +195,20 @@ export default function ReviewSystem({ productId, productName }: ReviewSystemPro
                       <Star
                         key={i}
                         size={12}
-                        className={i < review.rating ? 'text-amber-400 fill-amber-400' : 'text-zinc-700'}
+                        className={i < review.rating ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 dark:text-zinc-700'}
                       />
                     ))}
                     {(user?.uid === review.userId || profile?.role === 'admin' || profile?.role === 'owner') && (
                       <button
                         onClick={() => handleDelete(review.id)}
-                        className="ml-2 p-1.5 text-zinc-600 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                        className="ml-2 p-1.5 text-zinc-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                       >
                         <Trash2 size={14} />
                       </button>
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-zinc-300 leading-relaxed italic">
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed italic border-l-2 border-emerald-500/30 pl-4 bg-zinc-50 dark:bg-black/20 py-2 rounded-r-lg">
                    "{review.comment}"
                 </p>
               </motion.div>

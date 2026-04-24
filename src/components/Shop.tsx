@@ -183,10 +183,10 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
             
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-bold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-bold transition-all shadow-sm ${
                 showFilters || selectedBrand !== 'All' || selectedSocket !== 'All' || selectedRamType !== 'All'
-                ? 'bg-emerald-500 border-emerald-500 text-black'
-                : 'bg-zinc-900 border-white/10 text-white hover:bg-white/5'
+                ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20'
+                : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-white/5'
               }`}
             >
               <Filter size={16} />
@@ -196,11 +196,11 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
             {!isAdminOrOwner && (
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 bg-zinc-900 border border-white/10 rounded-xl text-white hover:bg-white/10 transition-all"
+                className="relative p-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-white/10 transition-all shadow-sm"
               >
                 <ShoppingCart size={20} />
                 {cart.length > 0 && (
-                   <span className="absolute -right-1 -top-1 bg-emerald-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                   <span className="absolute -right-1 -top-1 bg-emerald-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
                     {cart.length}
                   </span>
                 )}
@@ -215,10 +215,10 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm ${
                 selectedCategory === cat 
-                ? 'bg-emerald-500 text-black' 
-                : 'bg-zinc-900 border border-white/5 text-zinc-500 hover:text-white hover:bg-white/5'
+                ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' 
+                : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-white/5'
               }`}
             >
               {cat}
@@ -235,7 +235,7 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden mb-8"
             >
-              <div className="p-6 bg-zinc-900/50 border border-white/5 rounded-3xl backdrop-blur-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-6 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 rounded-3xl backdrop-blur-sm grid grid-cols-1 md:grid-cols-3 gap-6 shadow-xl">
                 {/* Brand Filter */}
                 <div className="space-y-3">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-2">
@@ -250,10 +250,10 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                           setSelectedBrand(brand as any);
                           setSelectedSocket('All');
                         }}
-                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border shadow-sm ${
                           selectedBrand === brand
                           ? 'bg-emerald-500 border-emerald-500 text-black'
-                          : 'bg-white/5 border-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
+                          : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-white/10'
                         }`}
                       >
                         {brand}
@@ -271,16 +271,16 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                   <select
                     value={selectedSocket}
                     onChange={(e) => setSelectedSocket(e.target.value)}
-                    className="w-full bg-white border border-white/10 rounded-xl py-2 px-4 text-xs font-bold text-black focus:outline-none focus:border-emerald-500 transition-all appearance-none"
+                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl py-2 px-4 text-xs font-bold text-zinc-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-all appearance-none shadow-sm"
                   >
                     <option value="All">All Sockets</option>
                     {(selectedBrand === 'All' || selectedBrand === 'Intel') && (
-                      <optgroup label="Intel Sockets">
+                      <optgroup label="Intel Sockets" className="dark:bg-zinc-900">
                         {INTEL_SOCKETS.map(s => <option key={s} value={s}>{s}</option>)}
                       </optgroup>
                     )}
                     {(selectedBrand === 'All' || selectedBrand === 'AMD') && (
-                      <optgroup label="AMD Sockets">
+                      <optgroup label="AMD Sockets" className="dark:bg-zinc-900">
                         {AMD_SOCKETS.map(s => <option key={s} value={s}>{s}</option>)}
                       </optgroup>
                     )}
@@ -298,10 +298,10 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                       <button
                         key={type}
                         onClick={() => setSelectedRamType(type)}
-                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border shadow-sm ${
                           selectedRamType === type
                           ? 'bg-emerald-500 border-emerald-500 text-black'
-                          : 'bg-white/5 border-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
+                          : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-white/10'
                         }`}
                       >
                         {type}
@@ -321,7 +321,7 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               layout
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="group relative flex flex-col overflow-hidden rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 transition-all"
+              className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 hover:border-emerald-500/50 transition-all shadow-sm hover:shadow-xl dark:shadow-none"
             >
               <div className="aspect-[4/3] overflow-hidden">
                 <img
@@ -333,53 +333,53 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               </div>
               <div className="flex flex-1 flex-col p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-emerald-500">
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-500">
                     {product.category}
                   </span>
                   <div className="flex flex-col items-end">
-                    <span className="text-lg font-bold text-white">₱{product.price.toLocaleString()}</span>
-                    <span className={`text-[10px] font-bold uppercase ${(product.stock ?? 10) > 0 ? 'text-white/40' : 'text-red-500'}`}>
-                      {(product.stock ?? 10) > 0 ? `${product.stock ?? 10} in stock` : 'Out of Stock'}
+                    <span className="text-lg font-black text-zinc-900 dark:text-white">₱{product.price.toLocaleString()}</span>
+                    <span className={`text-[10px] font-black uppercase tracking-tighter ${(product.stock ?? 10) > 0 ? 'text-zinc-400 dark:text-white/40' : 'text-red-500'}`}>
+                      {(product.stock ?? 10) > 0 ? `${product.stock ?? 10} available` : 'Out of Stock'}
                     </span>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white mb-2 italic uppercase tracking-tighter leading-none">{product.name}</h3>
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                    {product.socket && (
-                     <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-tighter">
+                     <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[10px] font-black uppercase tracking-tighter border border-emerald-500/20">
                        {product.socket}
                      </span>
                    )}
                    {product.ramType && (
-                     <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-500 text-[10px] font-black uppercase tracking-tighter">
+                     <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-500 text-[10px] font-black uppercase tracking-tighter border border-blue-500/20">
                        {product.ramType}
                      </span>
                    )}
                    {product.wattage && (
-                     <span className="px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-500 text-[10px] font-black uppercase tracking-tighter">
+                     <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-500 text-[10px] font-black uppercase tracking-tighter border border-amber-500/20">
                        {product.wattage}W
                      </span>
                    )}
                 </div>
-                <p className="text-sm text-zinc-400 line-clamp-2 mb-6">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-6 font-medium">
                   {product.description}
                 </p>
                 <div className="mt-auto space-y-3">
                   <button
                     onClick={() => setSelectedProduct(product)}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 py-2.5 text-xs font-bold hover:bg-emerald-500 hover:text-black transition-all"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-100 dark:bg-emerald-500/10 border border-zinc-200 dark:border-emerald-500/20 text-zinc-900 dark:text-emerald-500 py-2.5 text-xs font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all italic hover:shadow-lg hover:shadow-emerald-500/20"
                   >
                     <Star size={14} className="fill-current" />
-                    View Reviews
+                    Read User Reviews
                   </button>
                   {!isAdminOrOwner && (
                     <button
                       onClick={() => onAddToCart(product)}
                       disabled={(product.stock ?? 10) <= 0}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-white text-black py-3 text-sm font-bold hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:hover:bg-white disabled:cursor-not-allowed"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black py-3 text-sm font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all disabled:opacity-50 disabled:hover:bg-zinc-900 dark:disabled:hover:bg-white disabled:cursor-not-allowed italic shadow-lg shadow-black/10 dark:shadow-white/5 active:scale-95"
                     >
                       <ShoppingCart className="h-4 w-4" />
-                      {(product.stock ?? 10) > 0 ? 'Add to Cart' : 'Out of Stock'}
+                      {(product.stock ?? 10) > 0 ? 'Buy Component' : 'Sold Out'}
                     </button>
                   )}
                 </div>
@@ -410,103 +410,103 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-zinc-900 border-l border-white/10 z-[70] shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-white/10 z-[70] shadow-2xl flex flex-col"
             >
-              <div className="p-6 border-b border-white/10 flex items-center justify-between">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <ShoppingCart className="text-emerald-500" />
-                  Your Cart
+              <div className="p-6 border-b border-zinc-200 dark:border-white/10 flex items-center justify-between">
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white flex items-center gap-2 italic uppercase tracking-tighter">
+                  <ShoppingCart className="text-emerald-600 dark:text-emerald-500" />
+                  Your Hardware Cart
                 </h3>
-                <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-                  <X size={20} className="text-white/60" />
+                <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-zinc-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <X size={20} className="text-zinc-400 dark:text-white/60" />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {cart.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-white/40 gap-4">
-                    <ShoppingCart size={48} />
-                    <p>Your cart is empty</p>
+                  <div className="h-full flex flex-col items-center justify-center text-zinc-300 dark:text-white/40 gap-4 italic font-bold">
+                    <ShoppingCart size={48} className="opacity-20" />
+                    <p>No components found in cart</p>
                   </div>
                 ) : (
                   <>
                     <div className="space-y-4">
-                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-wider">Items in Cart</h4>
+                      <h4 className="text-[10px] font-black text-zinc-400 dark:text-white/40 uppercase tracking-[0.2em]">Selected Gear</h4>
                       {cart.map((item, idx) => (
-                        <div key={idx} className="flex gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl group">
-                          <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover" referrerPolicy="no-referrer" />
+                        <div key={idx} className="flex gap-4 p-4 bg-zinc-50 dark:bg-white/5 border border-zinc-100 dark:border-white/5 rounded-2xl group shadow-sm">
+                          <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover shadow-md" referrerPolicy="no-referrer" />
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-bold text-white truncate">{item.name}</h4>
-                            <p className="text-xs text-emerald-500 font-bold mt-1">₱{item.price.toLocaleString()}</p>
+                            <h4 className="text-sm font-black text-zinc-900 dark:text-white truncate italic uppercase tracking-tighter leading-none">{item.name}</h4>
+                            <p className="text-xs text-emerald-600 dark:text-emerald-500 font-black mt-2">₱{item.price.toLocaleString()}</p>
                           </div>
-                          <button onClick={() => removeFromCart(idx)} className="p-2 text-white/20 hover:text-red-500 transition-colors">
+                          <button onClick={() => removeFromCart(idx)} className="p-2 text-zinc-300 dark:text-white/20 hover:text-red-500 transition-colors">
                             <Trash2 size={18} />
                           </button>
                         </div>
                       ))}
                     </div>
 
-                    <div className="space-y-4 pt-6 border-t border-white/10">
-                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-wider">Delivery Information</h4>
+                    <div className="space-y-4 pt-6 border-t border-zinc-100 dark:border-white/10">
+                      <h4 className="text-[10px] font-black text-zinc-400 dark:text-white/40 uppercase tracking-[0.2em]">Shipping Hub</h4>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="col-span-2">
-                          <label className="text-[10px] text-white/40 mb-1 block">Full Name</label>
+                          <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 mb-1 block uppercase tracking-tighter">Full Name</label>
                           <input
                             type="text"
                             value={shippingAddress.fullName}
                             onChange={(e) => setShippingAddress({...shippingAddress, fullName: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                            placeholder="John Doe"
+                            className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold placeholder-zinc-300 dark:placeholder-zinc-600 shadow-inner"
+                            placeholder="PC Enthusiast"
                           />
                         </div>
                         <div className="col-span-2">
-                          <label className="text-[10px] text-white/40 mb-1 block">Phone Number</label>
+                          <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 mb-1 block uppercase tracking-tighter">Contact Number</label>
                           <input
                             type="text"
                             value={shippingAddress.phone}
                             onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                            placeholder="0917XXXXXXX"
+                            className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold placeholder-zinc-300 dark:placeholder-zinc-600 shadow-inner"
+                            placeholder="09XXXXXXXXX"
                           />
                         </div>
                         <div className="col-span-2">
-                          <label className="text-[10px] text-white/40 mb-1 block">Street Address</label>
+                          <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 mb-1 block uppercase tracking-tighter">Street Address</label>
                           <input
                             type="text"
                             value={shippingAddress.street}
                             onChange={(e) => setShippingAddress({...shippingAddress, street: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                            placeholder="123 Sakura St."
+                            className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold placeholder-zinc-300 dark:placeholder-zinc-600 shadow-inner"
+                            placeholder="Bldg/Lot/Block/Street"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-white/40 mb-1 block">City</label>
+                          <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 mb-1 block uppercase tracking-tighter">City</label>
                           <input
                             type="text"
                             value={shippingAddress.city}
                             onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold placeholder-zinc-300 dark:placeholder-zinc-600 shadow-inner"
                             placeholder="Manila"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-white/40 mb-1 block">Province</label>
+                          <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 mb-1 block uppercase tracking-tighter">Province</label>
                           <input
                             type="text"
                             value={shippingAddress.province}
                             onChange={(e) => setShippingAddress({...shippingAddress, province: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold placeholder-zinc-300 dark:placeholder-zinc-600 shadow-inner"
                             placeholder="Metro Manila"
                           />
                         </div>
                         <div className="col-span-2">
-                          <label className="text-[10px] text-white/40 mb-1 block">Zip Code</label>
+                          <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 mb-1 block uppercase tracking-tighter">Zip Code</label>
                           <input
                             type="text"
                             value={shippingAddress.zipCode}
                             onChange={(e) => setShippingAddress({...shippingAddress, zipCode: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                            placeholder="1000"
+                            className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold placeholder-zinc-300 dark:placeholder-zinc-600 shadow-inner"
+                            placeholder="1XXX"
                           />
                         </div>
                       </div>
@@ -515,71 +515,71 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                 )}
               </div>
 
-              <div className="p-6 border-t border-white/10 bg-black/40">
+              <div className="p-6 border-t border-zinc-100 dark:border-white/10 bg-zinc-50 dark:bg-black/40">
                 <div className="mb-6">
-                  <label className="text-xs font-bold text-white/40 uppercase mb-3 block">Payment Method</label>
+                  <label className="text-[10px] font-black text-zinc-400 dark:text-white/40 uppercase mb-3 block tracking-[0.2em]">Payment Vault</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setPaymentMethod('gcash')}
-                      className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
-                        paymentMethod === 'gcash' ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                      className={`flex items-center gap-2 p-3 rounded-xl border text-[10px] font-black uppercase transition-all shadow-sm ${
+                        paymentMethod === 'gcash' ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-white/60 hover:border-emerald-500/50'
                       }`}
                     >
-                      <Wallet size={16} />
+                      <Wallet size={14} />
                       GCash
                     </button>
                     <button
                       onClick={() => setPaymentMethod('paymaya')}
-                      className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
-                        paymentMethod === 'paymaya' ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                      className={`flex items-center gap-2 p-3 rounded-xl border text-[10px] font-black uppercase transition-all shadow-sm ${
+                        paymentMethod === 'paymaya' ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-white/60 hover:border-emerald-500/50'
                       }`}
                     >
-                      <Wallet size={16} />
+                      <Wallet size={14} />
                       PayMaya
                     </button>
                     <button
                       onClick={() => setPaymentMethod('visa')}
-                      className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
-                        paymentMethod === 'visa' ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                      className={`flex items-center gap-2 p-3 rounded-xl border text-[10px] font-black uppercase transition-all shadow-sm ${
+                        paymentMethod === 'visa' ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-white/60 hover:border-emerald-500/50'
                       }`}
                     >
-                      <CreditCard size={16} />
-                      Visa / Card
+                      <CreditCard size={14} />
+                      Visa / MC
                     </button>
                     <button
                       onClick={() => setPaymentMethod('bank_transfer')}
-                      className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
-                        paymentMethod === 'bank_transfer' ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                      className={`flex items-center gap-2 p-3 rounded-xl border text-[10px] font-black uppercase transition-all shadow-sm ${
+                        paymentMethod === 'bank_transfer' ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-white/60 hover:border-emerald-500/50'
                       }`}
                     >
-                      <Landmark size={16} />
-                      Bank Transfer
+                      <Landmark size={14} />
+                      Transfer
                     </button>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-end mb-6">
-                  <span className="text-white/60">Total Amount</span>
-                  <span className="text-2xl font-bold text-emerald-500">₱{totalPrice.toLocaleString()}</span>
+                  <span className="text-zinc-500 dark:text-white/60 font-medium">Grand Total</span>
+                  <span className="text-2xl font-black text-emerald-600 dark:text-emerald-500 italic tracking-tighter">₱{totalPrice.toLocaleString()}</span>
                 </div>
 
                 {checkoutSuccess ? (
-                  <div className="bg-emerald-500/20 border border-emerald-500/50 rounded-xl p-4 flex items-center gap-3 text-emerald-500">
+                  <div className="bg-emerald-500/20 border border-emerald-500/50 rounded-xl p-4 flex items-center gap-3 text-emerald-600 dark:text-emerald-500 shadow-lg shadow-emerald-500/10">
                     <CheckCircle2 size={24} />
-                    <span className="font-bold">Order placed successfully!</span>
+                    <span className="font-black italic uppercase tracking-tighter">Order Logged Successfully!</span>
                   </div>
                 ) : (
                   <button
                     onClick={handleCheckout}
                     disabled={cart.length === 0 || isCheckingOut}
-                    className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:hover:bg-emerald-500 text-black font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:hover:bg-emerald-500 text-black font-black italic uppercase tracking-widest py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95"
                   >
                     {isCheckingOut ? (
                       <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
                         <CreditCard size={20} />
-                        Checkout Now
+                        Confirm Purchase
                       </>
                     )}
                   </button>
@@ -605,7 +605,7 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full max-w-4xl max-h-[90vh] bg-zinc-900 border border-white/10 rounded-3xl z-[90] shadow-2xl flex flex-col overflow-hidden"
+              className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full max-w-4xl max-h-[90vh] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-3xl z-[90] shadow-2xl flex flex-col overflow-hidden"
             >
               <div className="flex flex-col md:flex-row h-full overflow-hidden">
                 {/* Visual Side */}
@@ -616,7 +616,7 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                     className="absolute inset-0 w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent md:bg-gradient-to-r" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-900 via-transparent to-transparent md:bg-gradient-to-r" />
                   <button 
                     onClick={() => setSelectedProduct(null)}
                     className="absolute top-4 left-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white/60 hover:text-white transition-colors"
@@ -629,30 +629,30 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                 <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest">{selectedProduct.category}</span>
-                      <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">{selectedProduct.name}</h2>
+                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest leading-none">{selectedProduct.category}</span>
+                      <h2 className="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase leading-tight mt-1">{selectedProduct.name}</h2>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-white">₱{selectedProduct.price.toLocaleString()}</p>
-                      <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider">MSRP</p>
+                      <p className="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter">₱{selectedProduct.price.toLocaleString()}</p>
+                      <p className="text-[10px] text-zinc-400 uppercase font-black tracking-widest">Market Price</p>
                     </div>
                   </div>
 
-                  <p className="text-sm text-zinc-400 leading-relaxed mb-8">
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8 font-medium italic border-l-4 border-emerald-500/20 pl-4 py-1">
                     {selectedProduct.description}
                   </p>
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     {selectedProduct.wattage && (
-                      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Power Draw</p>
-                        <p className="text-lg font-bold text-white">{selectedProduct.wattage}W</p>
+                      <div className="bg-zinc-50 dark:bg-white/5 rounded-2xl p-4 border border-zinc-100 dark:border-white/5 shadow-sm">
+                        <p className="text-[10px] text-zinc-400 uppercase font-black tracking-widest mb-1">Energy Impact</p>
+                        <p className="text-lg font-black text-zinc-900 dark:text-white italic tracking-tighter">{selectedProduct.wattage}W</p>
                       </div>
                     )}
-                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                      <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Stock Status</p>
-                      <p className={`text-lg font-bold ${selectedProduct.stock && selectedProduct.stock > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                        {selectedProduct.stock && selectedProduct.stock > 0 ? 'In Stock' : 'Sold Out'}
+                    <div className="bg-zinc-50 dark:bg-white/5 rounded-2xl p-4 border border-zinc-100 dark:border-white/5 shadow-sm">
+                      <p className="text-[10px] text-zinc-400 uppercase font-black tracking-widest mb-1">Stock Readiness</p>
+                      <p className={`text-lg font-black italic tracking-tighter ${selectedProduct.stock && selectedProduct.stock > 0 ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-500'}`}>
+                        {selectedProduct.stock && selectedProduct.stock > 0 ? 'READY TO SHIP' : 'OUT FOR RESTOCK'}
                       </p>
                     </div>
                   </div>
@@ -670,9 +670,9 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                         setSelectedProduct(null);
                       }}
                       disabled={(selectedProduct.stock ?? 10) <= 0}
-                      className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)] disabled:opacity-50"
+                      className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 italic uppercase tracking-widest active:scale-95"
                     >
-                      ADD TO CART
+                      SECURE COMPONENT
                     </button>
                   </div>
                 </div>

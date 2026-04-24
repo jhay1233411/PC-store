@@ -24,7 +24,7 @@ export const getGeminiResponse = async (
   const apiKey = getApiKey();
   
   if (!apiKey) {
-    return "AI Assistant is not configured. Please add your API key in the Settings menu.";
+    return "AI Assistant is not configured. Please ensure your API key is properly set.";
   }
 
   try {
@@ -43,31 +43,27 @@ export const getGeminiResponse = async (
     contents.push({ role: "user", parts: userParts });
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents,
       config: {
-        systemInstruction: `You are a PC building expert assistant in the year 2026. 
-You are specifically an assistant for "PC MASTER", a high-end hardware shop.
+        systemInstruction: `You are a PC building expert assistant named "Master AI" for the PC MASTER hardware shop in 2026.
 
-CRITICAL: Your answers MUST be grounded in the following real-time inventory from our shop. 
-ONLY recommend products from this list when helping users build or upgrade their PCs. 
-If a user asks for something we don't have, politely mention what we DO have that is comparable.
-
-CURRENT SHOP INVENTORY:
+RELEVANT INVENTORY:
 ${SHOP_CATALOG}
 
-GUIDELINES:
-1. Be technical but accessible.
-2. For troubleshooting, ask clarifying questions if the images aren't clear.
-3. All prices are in Philippine Peso (PHP).
-4. You can see images if users upload them to help diagnose issues with their hardware, assembly, or cable management.
-5. Always prefer suggesting a full compatible build using our current inventory.`
+YOUR CORE RULES:
+1. GROUNDED RECOMMENDATIONS: Only recommend hardware that exists in our inventory listed above. If you MUST mention another product for comparison, state clearly that PC MASTER does not currently stock it.
+2. TECHNICAL ACCURACY: Verify socket compatibility (e.g., LGA1700 vs LGA1851) and RAM types (DDR4 vs DDR5) based on the inventory data.
+3. CURRENCY: All prices are in Philippine Peso (PHP). Use the ₱ symbol.
+4. IMAGE ANALYSIS: You can analyze images of motherboard debug LEDs, cable management, and hardware assembly to provide diagnostic help.
+5. TONE: Professional, enthusiastic about tech, and highly precise.
+6. SHOP PRIDE: Proudly represent PC MASTER as the premier hardware destination.`
       }
     });
 
     if (!response || !response.text) {
-      console.warn("Gemini API returned an empty response:", response);
-      return "I received an empty response from the AI. Please try rephrasing your question.";
+      console.warn("Gemini API empty response");
+      return "I processed your request but didn't generate a text response. Could you try rephrasing?";
     }
 
     return response.text;
@@ -78,17 +74,17 @@ GUIDELINES:
     const errorStatus = error?.status || "";
 
     if (errorMessage.includes("API key not valid") || errorMessage.includes("invalid API key")) {
-      return "The API key provided is invalid. Please check your Settings.";
+      return "The API key is invalid. Please check your environment configurations.";
     }
     
     if (errorMessage.includes("Quota exceeded") || errorStatus === "RESOURCE_EXHAUSTED" || errorMessage.includes("429")) {
-      return "The AI Assistant has reached its free usage limit. Please wait a moment or try again later.";
+      return "The AI Assistant's quota has been reached. Please wait a moment before asking another question.";
     }
 
-    if (errorMessage.includes("permission") || errorStatus === "PERMISSION_DENIED" || errorMessage.includes("403")) {
-      return "The AI Assistant does not have permission to use this model with the current API key. Ensure the 'Generative Language API' is enabled in your Google Cloud Console.";
+    if (errorStatus === "PERMISSION_DENIED") {
+      return "Access denied to the Generative Language API. Please ensure the API is enabled.";
     }
 
-    return "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later.";
+    return "I hit a snag while thinking. Could you try sending your message again?";
   }
 };

@@ -271,28 +271,28 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8 py-20 min-h-screen font-sans">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 py-20 min-h-screen font-sans bg-white dark:bg-black text-zinc-900 dark:text-white transition-colors duration-300">
       <header className="mb-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-5xl font-black italic tracking-tighter uppercase text-white mb-2 leading-none">
+            <h1 className="text-5xl font-black italic tracking-tighter uppercase text-zinc-900 dark:text-white mb-2 leading-none">
               PC BUILDER <span className="text-emerald-500">EXPRESS</span>
             </h1>
-            <p className="text-zinc-500 font-medium tracking-tight">Inspired by EasyPC. Built for speed and compatibility.</p>
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium tracking-tight">Inspired by EasyPC. Built for speed and compatibility.</p>
           </div>
 
           <div className="flex items-center gap-4">
             <button
               onClick={handleSaveBuild}
               disabled={isSaving || totalPrice === 0}
-              className="group flex items-center gap-2 rounded-2xl bg-zinc-900 border border-white/5 px-6 py-4 text-xs font-black text-white hover:bg-emerald-500 hover:text-black hover:border-emerald-500 transition-all disabled:opacity-30 disabled:pointer-events-none"
+              className="group flex items-center gap-2 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 px-6 py-4 text-xs font-black text-zinc-900 dark:text-white hover:bg-emerald-500 hover:text-black hover:border-emerald-500 transition-all disabled:opacity-30 disabled:pointer-events-none shadow-sm"
             >
               {isSaving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />}
               {saveSuccess ? 'BUILD SAVED!' : 'SAVE CONFIG'}
             </button>
             <button
               onClick={() => setSelections({ CPU: null, Motherboard: null, RAM: null, GPU: null, Storage: null, PSU: null, Case: null, Cooling: null })}
-              className="p-4 rounded-2xl bg-zinc-900 border border-white/5 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 transition-all"
+              className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-zinc-400 dark:text-zinc-500 hover:text-red-500 hover:bg-red-500/10 transition-all shadow-sm"
               title="Clear All"
             >
               <Trash2 size={20} />
@@ -310,9 +310,9 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-zinc-950/50 rounded-[40px] border border-white/5 overflow-hidden backdrop-blur-sm"
+                className="bg-zinc-50 dark:bg-zinc-950/50 rounded-[40px] border border-zinc-200 dark:border-white/5 overflow-hidden backdrop-blur-sm shadow-sm"
               >
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-zinc-200 dark:divide-white/5">
                   {categories.map((cat) => {
                     const selection = selections[cat.id];
                     
@@ -325,13 +325,13 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                     return (
                       <div 
                         key={cat.id} 
-                        className={`flex flex-col md:flex-row md:flex-wrap items-start md:items-center gap-6 p-6 transition-colors group relative ${selection ? 'bg-emerald-500/5' : ''} ${isLocked ? 'opacity-50 grayscale' : 'hover:bg-white/[0.02]'}`}
+                        className={`flex flex-col md:flex-row md:flex-wrap items-start md:items-center gap-6 p-6 transition-colors group relative ${selection ? 'bg-emerald-500/5' : ''} ${isLocked ? 'opacity-50 grayscale' : 'hover:bg-zinc-100 dark:hover:bg-white/[0.02]'}`}
                       >
                         {isLocked && (
-                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[2px] cursor-not-allowed group rounded-[40px]">
+                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-100/40 dark:bg-black/40 backdrop-blur-[2px] cursor-not-allowed group rounded-[40px]">
                             <div className="flex flex-col items-center gap-2">
-                              <Shield size={24} className="text-zinc-500 group-hover:scale-110 transition-transform" />
-                              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 bg-black/60 px-4 py-2 rounded-full border border-white/5">
+                              <Shield size={24} className="text-zinc-400 dark:text-zinc-500 group-hover:scale-110 transition-transform" />
+                              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 bg-white/60 dark:bg-black/60 px-4 py-2 rounded-full border border-zinc-200 dark:border-white/5 shadow-sm">
                                 {lockReason}
                               </span>
                             </div>
@@ -339,35 +339,35 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                         )}
                         
                         <div className="flex items-start md:items-center gap-6 flex-1 min-w-0 md:min-w-[400px]">
-                          <div className={`h-16 w-16 rounded-3xl flex-shrink-0 flex items-center justify-center transition-all ${selection ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-white/5 text-zinc-500 group-hover:text-white group-hover:bg-white/10'}`}>
+                          <div className={`h-16 w-16 rounded-3xl flex-shrink-0 flex items-center justify-center transition-all ${selection ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30' : 'bg-zinc-200 dark:bg-white/5 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white group-hover:bg-zinc-300 dark:group-hover:bg-white/10'}`}>
                             <cat.icon size={28} strokeWidth={selection ? 2.5 : 1.5} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">{cat.label}</p>
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">{cat.label}</p>
                               <div className="group/guide relative">
-                                <Info size={12} className="text-zinc-700 hover:text-emerald-500 transition-colors cursor-help" />
-                                <div className="absolute left-0 bottom-full mb-2 w-56 p-4 rounded-2xl bg-zinc-900 border border-white/10 text-[10px] text-zinc-400 opacity-0 group-hover/guide:opacity-100 pointer-events-none transition-all z-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                                  <div className="font-black text-white uppercase mb-3 flex items-center gap-2 border-b border-white/5 pb-2">
+                                <Info size={12} className="text-zinc-300 dark:text-zinc-700 hover:text-emerald-500 transition-colors cursor-help" />
+                                <div className="absolute left-0 bottom-full mb-2 w-56 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 text-[10px] text-zinc-500 dark:text-zinc-400 opacity-0 group-hover/guide:opacity-100 pointer-events-none transition-all z-10 shadow-xl border border-zinc-200 dark:border-white/5">
+                                  <div className="font-black text-zinc-900 dark:text-white uppercase mb-3 flex items-center gap-2 border-b border-zinc-100 dark:border-white/5 pb-2">
                                     <cat.icon size={12} className="text-emerald-500" /> 
                                     <span>Installation Guide</span>
                                   </div>
                                   
                                   {/* Case Map Diagram */}
-                                  <div className="grid grid-cols-4 grid-rows-4 gap-1 h-32 mb-4 bg-black/40 rounded-lg p-2 border border-white/5">
-                                    <div className={`col-span-1 row-span-1 rounded-sm border border-dashed border-white/10 flex items-center justify-center ${cat.id === 'Cooling' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}></div>
-                                    <div className={`col-span-2 row-span-2 rounded-sm border border-dashed border-white/10 flex items-center justify-center ${cat.id === 'Motherboard' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}>
-                                      <div className={`h-4 w-4 rounded-xs border border-dashed border-white/10 ${cat.id === 'CPU' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : ''}`}></div>
-                                      <div className={`h-6 w-1 rounded-xs border border-dashed border-white/10 ml-1 ${cat.id === 'RAM' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : ''}`}></div>
+                                  <div className="grid grid-cols-4 grid-rows-4 gap-1 h-32 mb-4 bg-zinc-50 dark:bg-black/40 rounded-lg p-2 border border-zinc-100 dark:border-white/5">
+                                    <div className={`col-span-1 row-span-1 rounded-sm border border-dashed border-zinc-200 dark:border-white/10 flex items-center justify-center ${cat.id === 'Cooling' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}></div>
+                                    <div className={`col-span-2 row-span-2 rounded-sm border border-dashed border-zinc-200 dark:border-white/10 flex items-center justify-center ${cat.id === 'Motherboard' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}>
+                                      <div className={`h-4 w-4 rounded-xs border border-dashed border-zinc-200 dark:border-white/10 ${cat.id === 'CPU' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : ''}`}></div>
+                                      <div className={`h-6 w-1 rounded-xs border border-dashed border-zinc-200 dark:border-white/10 ml-1 ${cat.id === 'RAM' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : ''}`}></div>
                                     </div>
-                                    <div className={`col-span-1 row-span-1 rounded-sm border border-dashed border-white/10 ${cat.id === 'Cooling' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}></div>
+                                    <div className={`col-span-1 row-span-1 rounded-sm border border-dashed border-zinc-200 dark:border-white/10 ${cat.id === 'Cooling' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}></div>
                                     <div className="col-span-1 row-span-1"></div>
-                                    <div className={`col-span-3 row-span-1 rounded-sm border border-dashed border-white/10 mt-1 flex items-center justify-center ${cat.id === 'GPU' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] border-emerald-500/50' : ''}`}></div>
-                                    <div className={`col-span-2 row-span-1 rounded-sm border border-dashed border-white/10 mt-1 ${cat.id === 'PSU' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] border-emerald-500/50' : ''}`}></div>
-                                    <div className={`col-span-1 row-span-1 rounded-sm border border-dashed border-white/10 mt-1 ml-1 ${cat.id === 'Storage' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}></div>
+                                    <div className={`col-span-3 row-span-1 rounded-sm border border-dashed border-zinc-200 dark:border-white/10 mt-1 flex items-center justify-center ${cat.id === 'GPU' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] border-emerald-500/50' : ''}`}></div>
+                                    <div className={`col-span-2 row-span-1 rounded-sm border border-dashed border-zinc-200 dark:border-white/10 mt-1 ${cat.id === 'PSU' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] border-emerald-500/50' : ''}`}></div>
+                                    <div className={`col-span-1 row-span-1 rounded-sm border border-dashed border-zinc-200 dark:border-white/10 mt-1 ml-1 ${cat.id === 'Storage' ? 'bg-emerald-500/20 border-emerald-500/50' : ''}`}></div>
                                   </div>
 
-                                  <p className="leading-relaxed leading-tight text-white/70 italic">
+                                  <p className="leading-relaxed leading-tight text-zinc-600 dark:text-white/70 italic">
                                     {cat.guide}
                                   </p>
                                 </div>
@@ -375,18 +375,18 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                             </div>
                             {selection ? (
                               <div className="flex items-start md:items-center gap-3 flex-wrap">
-                                <h3 className="text-lg font-bold text-white break-words leading-tight">{selection.name}</h3>
-                                <div className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-500 text-[10px] font-black shrink-0">ACTIVE</div>
+                                <h3 className="text-lg font-bold text-zinc-900 dark:text-white break-words leading-tight">{selection.name}</h3>
+                                <div className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-600 dark:text-emerald-500 text-[10px] font-black shrink-0">ACTIVE</div>
                               </div>
                             ) : (
-                              <h3 className="text-lg font-bold text-white/20 italic tracking-tight uppercase">NOT SELECTED</h3>
+                              <h3 className="text-lg font-bold text-zinc-300 dark:text-white/20 italic tracking-tight uppercase">NOT SELECTED</h3>
                             )}
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-8 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-white/5 pt-4 md:pt-0 mt-4 md:mt-0 ml-auto transition-all">
+                        <div className="flex items-center gap-8 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-zinc-100 dark:border-white/5 pt-4 md:pt-0 mt-4 md:mt-0 ml-auto transition-all">
                           {selection && (
-                            <p className="text-xl font-black text-emerald-500 italic tracking-tighter">
+                            <p className="text-xl font-black text-emerald-600 dark:text-emerald-500 italic tracking-tighter">
                               ₱{selection.price.toLocaleString()}
                             </p>
                           )}
@@ -394,14 +394,14 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                              {selection && (
                                <button 
                                  onClick={() => removeItem(cat.id)}
-                                 className="h-12 w-12 rounded-2xl flex items-center justify-center bg-red-500/5 border border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                 className="h-12 w-12 rounded-2xl flex items-center justify-center bg-red-500/5 border border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
                                >
                                  <X size={20} />
                                </button>
                              )}
                              <button
                                onClick={() => setActiveCategory(cat.id)}
-                               className={`h-12 px-6 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${selection ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_10px_20px_rgba(16,185,129,0.2)]'}`}
+                               className={`h-12 px-6 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-sm ${selection ? 'bg-zinc-100 dark:bg-white/5 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-white/10' : 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-emerald-500/20'}`}
                              >
                                {selection ? 'CHANGE' : 'SELECT'}
                              </button>
@@ -417,29 +417,29 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
-                className="bg-zinc-950/50 rounded-[40px] border border-white/5 overflow-hidden"
+                className="bg-white dark:bg-zinc-950/50 rounded-[40px] border border-zinc-200 dark:border-white/5 overflow-hidden shadow-sm"
               >
-                <div className="p-8 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-zinc-900/50">
+                <div className="p-8 border-b border-zinc-200 dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-zinc-50 dark:bg-zinc-900/50">
                    <div className="flex items-center gap-6">
                       <button 
                         onClick={() => setActiveCategory(null)}
-                        className="h-14 w-14 rounded-2xl flex items-center justify-center bg-white/5 text-white hover:bg-white/10 transition-colors"
+                        className="h-14 w-14 rounded-2xl flex items-center justify-center bg-zinc-200 dark:bg-white/5 text-zinc-900 dark:text-white hover:bg-zinc-300 dark:hover:bg-white/10 transition-colors shadow-sm"
                       >
                         <ArrowLeft size={24} />
                       </button>
                       <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white leading-none mb-1">SELECT {activeCategory}</h2>
-                        <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Choose compatible hardware</p>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-zinc-900 dark:text-white leading-none mb-1">SELECT {activeCategory}</h2>
+                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Choose compatible hardware</p>
                       </div>
                    </div>
                    <div className="relative w-full md:w-72">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" size={18} />
                       <input 
                         type="text"
                         placeholder="Search parts..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 text-sm text-white focus:outline-none focus:border-emerald-500/50 transition-all font-bold"
+                        className="w-full h-14 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl pl-12 pr-6 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-emerald-500/50 transition-all font-bold shadow-inner"
                       />
                    </div>
                 </div>
@@ -447,11 +447,11 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-8 max-h-[700px] overflow-y-auto scrollbar-hide min-h-[300px]">
                   {getAvailableItems(activeCategory!).length === 0 ? (
                     <div className="col-span-full flex flex-col items-center justify-center p-20 text-center">
-                      <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center text-zinc-500 mb-6">
+                      <div className="h-20 w-20 rounded-full bg-zinc-100 dark:bg-white/5 flex items-center justify-center text-zinc-300 dark:text-zinc-500 mb-6">
                         <Box size={40} className="opacity-20" />
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2 italic uppercase">No Compatible Parts Found</h3>
-                      <p className="text-sm text-zinc-500 max-w-xs mx-auto">
+                      <h3 className="text-xl font-bold text-zinc-400 dark:text-white mb-2 italic uppercase">No Compatible Parts Found</h3>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-500 max-w-xs mx-auto">
                         We couldn't find any compatible {activeCategory} items for your current selection. 
                         Try changing your CPU or Motherboard to see more options.
                       </p>
@@ -469,21 +469,21 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                             handleItemSelect(activeCategory, item);
                           }
                         }}
-                        className={`group relative flex items-center gap-6 p-6 rounded-[32px] border transition-all text-left cursor-pointer ${isSelected ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white/5 border-white/10 text-white hover:border-white/30 hover:bg-white/[0.03]'}`}
+                        className={`group relative flex items-center gap-6 p-6 rounded-[32px] border transition-all text-left cursor-pointer ${isSelected ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white hover:border-emerald-500/50 hover:bg-zinc-50 dark:hover:bg-white/[0.03] shadow-sm'}`}
                       >
-                        <div className="h-24 w-24 rounded-2xl overflow-hidden bg-black/20 flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <div className="h-24 w-24 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-black/20 flex-shrink-0 group-hover:scale-105 transition-transform shadow-sm">
                            <img src={item.image} alt={item.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="text-lg font-bold leading-tight mb-1 truncate">{item.name}</h4>
                           <div className="flex flex-wrap items-center gap-2 mb-2">
                              {item.socket && (
-                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isSelected ? 'bg-black/20 text-black' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isSelected ? 'bg-black/20 text-black' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-500'}`}>
                                  {item.socket}
                                </span>
                              )}
                              {item.ramType && (
-                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isSelected ? 'bg-black/20 text-black' : 'bg-blue-500/10 text-blue-500'}`}>
+                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isSelected ? 'bg-black/20 text-black' : 'bg-blue-500/10 text-blue-600 dark:text-blue-500'}`}>
                                  {item.ramType}
                                </span>
                              )}
@@ -491,13 +491,13 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                           <p className={`text-xs mb-3 line-clamp-1 italic ${isSelected ? 'text-black/60' : 'text-zinc-500'}`}>{item.description}</p>
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-3">
-                                <p className={`text-xl font-black tracking-tighter italic ${isSelected ? 'text-black' : 'text-emerald-500'}`}>₱{item.price.toLocaleString()}</p>
+                                <p className={`text-xl font-black tracking-tighter italic ${isSelected ? 'text-black' : 'text-emerald-600 dark:text-emerald-500'}`}>₱{item.price.toLocaleString()}</p>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedProductForReview(item);
                                   }}
-                                  className={`p-2 rounded-xl border transition-all ${isSelected ? 'bg-black/20 border-black/10 text-black hover:bg-black/30' : 'bg-white/5 border-white/10 text-emerald-500 hover:bg-emerald-500 hover:text-black hover:border-emerald-500'}`}
+                                  className={`p-2 rounded-xl border transition-all ${isSelected ? 'bg-black/20 border-black/10 text-black hover:bg-black/30' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-emerald-500 hover:bg-emerald-500 hover:text-black hover:border-emerald-500'}`}
                                 >
                                   <Star size={14} className="fill-current" />
                                 </button>
@@ -516,13 +516,13 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
 
         {/* SIDEBAR SUMMARY */}
         <div className="lg:col-span-4 sticky top-28">
-           <div className="bg-zinc-950/50 rounded-[40px] border border-white/5 p-8 backdrop-blur-xl">
+           <div className="bg-white dark:bg-zinc-950/50 rounded-[40px] border border-zinc-200 dark:border-white/5 p-8 backdrop-blur-xl shadow-lg transition-colors duration-300">
              <div className="mb-8">
-               <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-2">BUILD SUMMARY</h2>
+               <h2 className="text-2xl font-black italic uppercase tracking-tighter text-zinc-900 dark:text-white mb-2">BUILD SUMMARY</h2>
                <div className="h-1 w-12 bg-emerald-500 rounded-full" />
              </div>
 
-             <div className="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+             <div className="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-white/10">
                {categories.map(cat => {
                  const selection = selections[cat.id];
                  if (!selection) return null;
@@ -531,34 +531,34 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                       <div className="flex items-center gap-3 min-w-0">
                          <cat.icon size={14} className="text-emerald-500 flex-shrink-0" />
                          <div className="flex flex-col min-w-0">
-                           <span className="text-xs font-bold text-white/60 truncate group-hover:text-white transition-colors">{selection.name}</span>
-                           <span className="text-[8px] font-black uppercase text-zinc-600">
+                           <span className="text-xs font-bold text-zinc-700 dark:text-white/60 truncate group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">{selection.name}</span>
+                           <span className="text-[8px] font-black uppercase text-zinc-400 dark:text-zinc-600">
                               {selection.socket || selection.ramType || ''}
                            </span>
                          </div>
                       </div>
-                      <span className="text-xs font-black text-emerald-500 italic whitespace-nowrap">₱{selection.price.toLocaleString()}</span>
+                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-500 italic whitespace-nowrap">₱{selection.price.toLocaleString()}</span>
                     </div>
                  );
                })}
              </div>
 
-             <div className="space-y-6 pt-8 border-t border-white/5">
+             <div className="space-y-6 pt-8 border-t border-zinc-100 dark:border-white/5">
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-500 font-black uppercase text-[10px] tracking-widest">Grand Total</span>
-                  <p className="text-4xl font-black italic tracking-tighter text-white leading-none">₱{totalPrice.toLocaleString()}</p>
+                  <span className="text-zinc-400 dark:text-zinc-500 font-black uppercase text-[10px] tracking-widest">Grand Total</span>
+                  <p className="text-4xl font-black italic tracking-tighter text-zinc-900 dark:text-white leading-none">₱{totalPrice.toLocaleString()}</p>
                 </div>
                 
                 <button
                   onClick={() => setIsCheckoutModalOpen(true)}
                   disabled={totalPrice === 0}
-                  className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 disabled:pointer-events-none text-black font-black py-6 rounded-[32px] text-lg italic tracking-tighter shadow-[0_20px_40px_rgba(16,185,129,0.2)] hover:shadow-[0_25px_50px_rgba(16,185,129,0.3)] transition-all active:scale-95 flex items-center justify-center gap-3"
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 disabled:pointer-events-none text-black font-black py-6 rounded-[32px] text-lg italic tracking-tighter shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all active:scale-95 flex items-center justify-center gap-3"
                 >
                   <ShoppingCart size={24} />
                   ORDER THIS BUILD
                 </button>
 
-                <p className="text-[10px] text-zinc-600 text-center font-bold px-4 leading-relaxed uppercase tracking-widest">
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-600 text-center font-bold px-4 leading-relaxed uppercase tracking-widest">
                   Shipping and taxes calculated at checkout. COMPATIBILITY AUTOMATICALLY VERIFIED.
                 </p>
              </div>

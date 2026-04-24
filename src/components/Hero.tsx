@@ -60,11 +60,13 @@ export default function Hero({ onStart }: HeroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 + idx * 0.1 }}
-              className="flex flex-col items-center p-6 rounded-2xl bg-white/5 border border-white/10 text-center"
+              className="flex flex-col items-center p-6 rounded-3xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-center shadow-sm dark:shadow-none transition-all hover:border-emerald-500/30 group"
             >
-              <feature.icon className="h-10 w-10 text-emerald-500 mb-4" />
-              <h3 className="text-lg font-semibold text-white">{feature.title}</h3>
-              <p className="mt-2 text-sm text-zinc-400">{feature.desc}</p>
+              <div className="h-16 w-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <feature.icon className="h-8 w-8 text-emerald-600 dark:text-emerald-500" />
+              </div>
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-white uppercase tracking-tighter italic">{feature.title}</h3>
+              <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">{feature.desc}</p>
             </motion.div>
           ))}
         </div>

@@ -78,14 +78,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-md overflow-hidden rounded-3xl bg-zinc-900 border border-white/10 shadow-2xl my-auto"
+            className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 shadow-2xl my-auto"
           >
             {/* Tabs Header */}
-            <div className="flex border-b border-white/5">
+            <div className="flex border-b border-zinc-100 dark:border-white/5">
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-4 text-sm font-bold transition-all ${
-                  isLogin ? 'text-emerald-500 border-b-2 border-emerald-500 bg-white/5' : 'text-zinc-500 hover:text-white'
+                  isLogin ? 'text-emerald-600 dark:text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/5' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 SIGN IN
@@ -93,7 +93,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 onClick={() => setIsLogin(false)}
                 className={`flex-1 py-4 text-sm font-bold transition-all ${
-                  !isLogin ? 'text-emerald-500 border-b-2 border-emerald-500 bg-white/5' : 'text-zinc-500 hover:text-white'
+                  !isLogin ? 'text-emerald-600 dark:text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/5' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 CREATE ACCOUNT
@@ -102,16 +102,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-black text-white tracking-tighter uppercase italic">
+                <h2 className="text-xl font-black text-zinc-900 dark:text-white tracking-tighter uppercase italic">
                   {isLogin ? 'Welcome Back' : 'Join PC Master'}
                 </h2>
-                <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
+                <button onClick={onClose} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
               {error && (
-                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium">
                   {error}
                 </div>
               )}
@@ -119,44 +119,44 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 dark:text-zinc-500" />
                     <input
                       type="text"
                       required
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder="Full Name"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                      className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-bold"
                     />
                   </div>
                 )}
                 
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 dark:text-zinc-500" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email Address"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                    className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-bold"
                   />
                 </div>
 
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 dark:text-zinc-500" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                    className="w-full bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl py-3 pl-12 pr-12 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-bold"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -165,17 +165,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-emerald-500 text-black font-bold py-4 rounded-2xl hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full bg-emerald-500 text-black font-black py-4 rounded-2xl hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-emerald-500/20 active:scale-95 italic uppercase tracking-tighter"
                 >
                   {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (isLogin ? 'Sign In' : 'Sign Up')}
                 </button>
               </form>
 
-              <p className="mt-8 text-center text-zinc-500 text-sm">
+              <p className="mt-8 text-center text-zinc-500 text-sm font-medium">
                 {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
                 <button
                   onClick={() => setIsLogin(!isLogin)}
-                  className="text-emerald-500 font-bold hover:text-emerald-400 transition-colors"
+                  className="text-emerald-600 dark:text-emerald-500 font-bold hover:text-emerald-500 transition-colors"
                 >
                   {isLogin ? 'Sign Up' : 'Sign In'}
                 </button>

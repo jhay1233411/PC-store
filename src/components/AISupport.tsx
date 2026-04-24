@@ -4,12 +4,13 @@ import { Send, User, Loader2, Trash2, Sparkles, Image as ImageIcon, X, HelpCircl
 import Markdown from 'react-markdown';
 import { getGeminiResponse } from '../services/gemini';
 import { Message } from '../types';
+import { cn } from '../lib/utils';
 
 export default function AISupport() {
   const [messages, setMessages] = useState<Message[]>(() => {
     const saved = localStorage.getItem('pc_master_ai_support_messages');
     return saved ? JSON.parse(saved) : [
-      { role: 'model', text: '# Welcome to AI Support 2.0\n\nI am your specialized PC Hardware & Assembly Assistant. I can help you with:\n\n- **Compatibility Checks**: Ensure your parts fit correctly.\n- **Assembly Guidance**: Step-by-step help with your build.\n- **Troubleshooting**: Upload photos of your PC if it\'s not booting or has cable management issues.\n- **Hardware Advice**: Recommendations for workstation or gaming builds.\n\nHow can I help you build your master machine today?' }
+      { role: 'model', text: '# Welcome to AI Support (Gemini 1.5 Flash)\n\nI am your specialized PC Hardware & Assembly Assistant. I can help you with:\n\n- **Compatibility Checks**: Ensure your parts fit correctly.\n- **Assembly Guidance**: Step-by-step help with your build.\n- **Troubleshooting**: Upload photos of your PC if it\'s not booting or has cable management issues.\n- **Hardware Advice**: Recommendations for workstation or gaming builds.\n\nHow can I help you build your master machine today?' }
     ];
   });
 
@@ -80,37 +81,37 @@ export default function AISupport() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-black flex flex-col lg:flex-row">
+    <div className="min-h-[calc(100vh-64px)] bg-white dark:bg-black text-zinc-900 dark:text-white flex flex-col lg:flex-row transition-colors duration-300">
       {/* Sidebar Info - Desktop */}
-      <div className="hidden lg:flex w-80 border-r border-white/10 p-8 flex-col gap-8 bg-zinc-900/30">
+      <div className="hidden lg:flex w-80 border-r border-zinc-200 dark:border-white/10 p-8 flex-col gap-8 bg-zinc-50/50 dark:bg-zinc-900/30">
         <div>
-          <div className="flex items-center gap-2 mb-4 text-emerald-500">
+          <div className="flex items-center gap-2 mb-4 text-emerald-600 dark:text-emerald-500">
             <Sparkles size={20} />
-            <h2 className="font-bold uppercase tracking-widest text-sm">AI Capabilities</h2>
+            <h2 className="font-black uppercase tracking-widest text-[10px] italic">Hardware Intelligence</h2>
           </div>
           <div className="space-y-4">
             <div className="flex gap-3 text-xs">
-              <Cpu className="text-zinc-500 shrink-0" size={16} />
-              <p className="text-zinc-400">Socket & RAM compatibility analysis across all major platforms.</p>
+              <Cpu className="text-zinc-400 dark:text-zinc-600 shrink-0" size={16} />
+              <p className="text-zinc-600 dark:text-zinc-400 font-medium">Socket & RAM compatibility analysis across all major platforms.</p>
             </div>
             <div className="flex gap-3 text-xs">
-              <ImageIcon className="text-zinc-500 shrink-0" size={16} />
-              <p className="text-zinc-400">Post-build inspection via photo uploads for cable management and error codes.</p>
+              <ImageIcon className="text-zinc-400 dark:text-zinc-600 shrink-0" size={16} />
+              <p className="text-zinc-600 dark:text-zinc-400 font-medium">Post-build inspection via photo uploads for cable management and error codes.</p>
             </div>
             <div className="flex gap-3 text-xs">
-              <ShieldCheck className="text-zinc-500 shrink-0" size={16} />
-              <p className="text-zinc-400">Expert advice on extreme workstations and dual-CPU systems.</p>
+              <ShieldCheck className="text-zinc-400 dark:text-zinc-600 shrink-0" size={16} />
+              <p className="text-zinc-600 dark:text-zinc-400 font-medium">Expert advice on extreme workstations and dual-CPU systems.</p>
             </div>
           </div>
         </div>
 
         <div className="mt-auto">
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-            <h3 className="text-xs font-bold text-white mb-2 flex items-center gap-2">
+          <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 shadow-sm">
+            <h3 className="text-[10px] font-black text-zinc-900 dark:text-white mb-2 flex items-center gap-2 uppercase tracking-widest">
               <HelpCircle size={14} className="text-emerald-500" />
-              Pro Tip
+              Building Pro-Tip
             </h3>
-            <p className="text-[10px] text-zinc-500 leading-relaxed">
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-500 leading-relaxed font-medium">
               Upload a clear photo of your motherboard's "Debug LEDs" if your PC isn't posting for instant diagnosis.
             </p>
           </div>
@@ -118,16 +119,16 @@ export default function AISupport() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-full bg-black">
-        <div className="p-4 border-b border-white/10 lg:hidden flex justify-between items-center bg-zinc-900/50">
-          <div className="flex items-center gap-2">
-            <BrainCircuit className="text-emerald-500" />
-            <span className="font-bold">AI Support</span>
+      <div className="flex-1 flex flex-col h-full bg-white dark:bg-black">
+        <div className="p-4 border-b border-zinc-200 dark:border-white/10 lg:hidden flex justify-between items-center bg-zinc-50 dark:bg-zinc-900/50">
+          <div className="flex items-center gap-2 text-zinc-900 dark:text-white">
+            <BrainCircuit className="text-emerald-600 dark:text-emerald-500" />
+            <span className="font-black italic uppercase tracking-tighter">AI Expert Support</span>
           </div>
-          <button onClick={clearChat} className="text-white/40"><Trash2 size={18} /></button>
+          <button onClick={clearChat} className="text-zinc-400 dark:text-white/40 hover:text-red-500 transition-colors"><Trash2 size={18} /></button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8 space-y-6 lg:max-w-4xl lg:mx-auto w-full scrollbar-thin scrollbar-thumb-white/10">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8 space-y-6 lg:max-w-4xl lg:mx-auto w-full custom-scrollbar">
           {messages.map((msg, idx) => (
             <motion.div
               key={idx}
@@ -135,27 +136,34 @@ export default function AISupport() {
               animate={{ opacity: 1, y: 0 }}
               className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
             >
-              <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${
-                msg.role === 'model' ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]' : 'bg-white/10 text-white'
-              }`}>
+              <div className={cn(
+                "flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-all border shadow-sm",
+                msg.role === 'model' 
+                ? "bg-emerald-500 border-emerald-400 text-black shadow-lg shadow-emerald-500/20" 
+                : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400"
+              )}>
                 {msg.role === 'model' ? <BrainCircuit size={24} /> : <User size={24} />}
               </div>
               <div className={`flex flex-col gap-2 max-w-[85%] lg:max-w-[75%]`}>
                 {msg.image && (
-                  <div className="relative group rounded-2xl overflow-hidden border border-white/10 w-fit max-w-sm">
+                  <div className="relative group rounded-3xl overflow-hidden border border-zinc-200 dark:border-white/10 w-fit max-w-sm shadow-xl">
                     <img 
                       src={`data:${msg.image.mimeType};base64,${msg.image.data}`} 
                       alt="Attachment" 
-                      className="w-full h-auto object-contain bg-zinc-900"
+                      className="w-full h-auto object-contain bg-zinc-50 dark:bg-zinc-900"
                     />
                   </div>
                 )}
-                <div className={`rounded-3xl px-5 py-3 lg:px-6 lg:py-4 text-sm leading-relaxed ${
+                <div className={cn(
+                  "rounded-3xl px-5 py-3 lg:px-6 lg:py-4 text-sm leading-relaxed transition-all shadow-sm",
                   msg.role === 'model' 
-                  ? 'bg-zinc-900 text-zinc-100 border border-white/5' 
-                  : 'bg-emerald-500 text-black font-medium shadow-lg'
-                }`}>
-                  <div className="markdown-body prose prose-invert prose-emerald max-w-none">
+                  ? "bg-zinc-50 dark:bg-zinc-900/50 text-zinc-800 dark:text-zinc-100 border border-zinc-200 dark:border-white/5" 
+                  : "bg-emerald-500 text-black font-bold italic shadow-lg shadow-emerald-500/10"
+                )}>
+                  <div className={cn(
+                    "markdown-body prose max-w-none transition-colors",
+                    msg.role === 'model' ? "dark:prose-invert prose-emerald" : "prose-zinc font-bold"
+                  )}>
                     <Markdown>{msg.text}</Markdown>
                   </div>
                 </div>
@@ -164,11 +172,11 @@ export default function AISupport() {
           ))}
           {isLoading && (
             <div className="flex gap-4">
-              <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-emerald-500 text-black flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                <Loader2 size={24} className="animate-spin" />
+              <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-emerald-500 text-black flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-emerald-400">
+                <Loader2 size={18} className="animate-spin" />
               </div>
-              <div className="bg-zinc-900 border border-white/5 text-zinc-400 rounded-3xl px-5 py-3 text-sm italic">
-                AI Expert is analyzing your request...
+              <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-zinc-500 dark:text-zinc-400 rounded-3xl px-5 py-3 text-xs font-black uppercase tracking-widest shadow-sm italic animate-pulse">
+                Diagnostic sequence in progress...
               </div>
             </div>
           )}
@@ -176,7 +184,7 @@ export default function AISupport() {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 lg:p-8 bg-black/80 backdrop-blur-md border-t border-white/10 sticky bottom-0">
+        <div className="p-4 lg:p-8 bg-white dark:bg-black/80 backdrop-blur-md border-t border-zinc-200 dark:border-white/10 sticky bottom-0">
           <div className="max-w-4xl mx-auto space-y-4">
             <AnimatePresence>
               {attachedImage && (
@@ -184,7 +192,7 @@ export default function AISupport() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="relative h-20 w-20 rounded-xl overflow-hidden border border-emerald-500 inline-block bg-zinc-900"
+                  className="relative h-20 w-20 rounded-2xl overflow-hidden border-2 border-emerald-500 inline-block bg-zinc-100 dark:bg-zinc-900 shadow-2xl"
                 >
                   <img 
                     src={`data:${attachedImage.mimeType};base64,${attachedImage.data}`} 
@@ -192,22 +200,22 @@ export default function AISupport() {
                   />
                   <button 
                     onClick={() => setAttachedImage(null)}
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 text-white"
+                    className="absolute inset-0 flex items-center justify-center bg-black/60 text-white hover:bg-black/40 transition-colors"
                   >
-                    <X size={20} />
+                    <X size={24} />
                   </button>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="relative">
+            <div className="relative group">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Describe your PC issue or request build advice..."
-                className="w-full bg-zinc-900 border border-white/10 rounded-2xl py-4 pl-6 pr-24 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all shadow-inner"
+                placeholder="Query the Hardware AI..."
+                className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-3xl py-4 pl-6 pr-24 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all shadow-inner font-medium"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                 <input
@@ -220,21 +228,21 @@ export default function AISupport() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                  className="p-2 text-zinc-400 hover:text-emerald-500 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 rounded-xl transition-all"
                 >
                   <ImageIcon size={20} />
                 </button>
                 <button
                   onClick={handleSend}
                   disabled={(!input.trim() && !attachedImage) || isLoading}
-                  className="p-2.5 bg-emerald-500 text-black rounded-xl hover:bg-emerald-400 disabled:opacity-50 transition-all shadow-lg"
+                  className="p-3 bg-emerald-500 text-black rounded-2xl hover:bg-emerald-400 disabled:opacity-50 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
                 >
-                  <Send size={20} />
+                  <Send size={18} />
                 </button>
               </div>
             </div>
-            <p className="text-[10px] text-center text-zinc-600 font-medium">
-              Powered by Gemini 1.5 Flash. AI responses can vary. Always double-check hardware manuals.
+            <p className="text-[9px] text-center text-zinc-400 dark:text-zinc-600 font-black uppercase tracking-[0.2em] italic">
+              Quantum-Grounded System (Gemini 1.5 Flash)
             </p>
           </div>
         </div>

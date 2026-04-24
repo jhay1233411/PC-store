@@ -17,29 +17,29 @@ export default function Tutorial() {
   };
 
   return (
-    <div className="bg-black min-h-screen py-12">
+    <div className="bg-white dark:bg-black min-h-screen py-12 transition-colors duration-300">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white tracking-tight">Video Masterclass</h2>
-          <p className="text-zinc-400 mt-2">Watch expert-led video guides to master PC building and maintenance.</p>
+          <h2 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Video Masterclass</h2>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-2">Watch expert-led video guides to master PC building and maintenance.</p>
           
           <div className="mt-8 flex justify-center gap-4">
             <button
               onClick={() => { setActiveType('assemble'); setCurrentStepIdx(0); }}
-              className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${
+              className={`px-6 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
                 activeType === 'assemble' 
-                ? 'bg-emerald-500 text-black' 
-                : 'bg-white/5 text-zinc-400 hover:bg-white/10'
+                ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' 
+                : 'bg-zinc-100 dark:bg-white/5 text-zinc-400 hover:bg-zinc-200 dark:hover:bg-white/10'
               }`}
             >
               Assembling
             </button>
             <button
               onClick={() => { setActiveType('disassemble'); setCurrentStepIdx(0); }}
-              className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${
+              className={`px-6 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
                 activeType === 'disassemble' 
-                ? 'bg-emerald-500 text-black' 
-                : 'bg-white/5 text-zinc-400 hover:bg-white/10'
+                ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' 
+                : 'bg-zinc-100 dark:bg-white/5 text-zinc-400 hover:bg-zinc-200 dark:hover:bg-white/10'
               }`}
             >
               Disassembling
@@ -47,7 +47,7 @@ export default function Tutorial() {
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl bg-white/5 border border-white/10">
+        <div className="relative overflow-hidden rounded-3xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative aspect-video">
               <AnimatePresence mode="wait">
@@ -91,7 +91,7 @@ export default function Tutorial() {
               </div>
             </div>
 
-            <div className="p-8 lg:p-12 flex flex-col justify-center bg-zinc-900/50">
+            <div className="p-8 lg:p-12 flex flex-col justify-center bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentStep.id}
@@ -100,20 +100,20 @@ export default function Tutorial() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h3 className="text-2xl font-bold text-white">{currentStep.title}</h3>
-                  <p className="text-zinc-400 leading-relaxed text-lg">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">{currentStep.title}</h3>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg">
                     {currentStep.content}
                   </p>
                   
                   <div className="pt-8 flex items-center justify-end">
                     {currentStepIdx === filteredSteps.length - 1 ? (
-                      <div className="flex items-center gap-2 text-emerald-500 font-bold">
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500 font-bold">
                         <CheckCircle2 className="h-5 w-5" /> Tutorial Complete
                       </div>
                     ) : (
                       <button
                         onClick={nextStep}
-                        className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-black hover:bg-emerald-400 transition-all"
+                        className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-black hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
                       >
                         Next Step <ChevronRight className="h-5 w-5" />
                       </button>
@@ -131,7 +131,7 @@ export default function Tutorial() {
               key={step.id}
               onClick={() => setCurrentStepIdx(idx)}
               className={`h-1.5 rounded-full transition-all ${
-                idx === currentStepIdx ? 'bg-emerald-500 w-full' : 'bg-white/10 w-full hover:bg-white/20'
+                idx === currentStepIdx ? 'bg-emerald-500 w-full shadow-lg shadow-emerald-500/20' : 'bg-zinc-200 dark:bg-white/10 w-full hover:bg-zinc-300 dark:hover:bg-white/20'
               }`}
             />
           ))}
