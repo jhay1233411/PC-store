@@ -574,57 +574,57 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-zinc-900 border border-white/10 rounded-[40px] p-8 w-full max-w-sm md:max-w-md shadow-2xl overflow-hidden relative"
+              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-[40px] p-8 w-full max-w-sm md:max-w-md shadow-2xl overflow-hidden relative"
             >
               <div className="flex justify-between items-center mb-8">
                 <div>
-                   <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white leading-none">CHECKOUT</h2>
-                   <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em] mt-1">Complete your order</p>
+                   <h2 className="text-3xl font-black italic tracking-tighter uppercase text-zinc-900 dark:text-white leading-none">CHECKOUT</h2>
+                   <p className="text-[10px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-[0.2em] mt-1">Complete your order</p>
                 </div>
-                <button onClick={() => setIsCheckoutModalOpen(false)} className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors">
+                <button onClick={() => setIsCheckoutModalOpen(false)} className="h-12 w-12 rounded-2xl bg-zinc-100 dark:bg-white/5 flex items-center justify-center text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white transition-colors">
                   <X size={20} />
                 </button>
               </div>
 
-              <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+              <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                 <div className="space-y-6">
-                  <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6">
-                    <label className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-6 block border-b border-white/5 pb-4">Recipient Details</label>
+                  <div className="bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/5 rounded-3xl p-6">
+                    <label className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-[0.2em] mb-6 block border-b border-zinc-100 dark:border-white/5 pb-4">Recipient Details</label>
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-zinc-500 pl-1">Full Name</label>
+                        <label className="text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-500 pl-1">Full Name</label>
                         <input
                           type="text"
                           value={shippingAddress.fullName}
                           onChange={(e) => setShippingAddress({...shippingAddress, fullName: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500/50"
+                          className="w-full bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm font-bold text-zinc-900 dark:text-white focus:outline-none focus:border-emerald-500/50"
                           placeholder="John Doe"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-zinc-500 pl-1">Mobile number</label>
+                        <label className="text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-500 pl-1">Mobile number</label>
                         <input
                           type="text"
                           value={shippingAddress.phone}
                           onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500/50"
+                          className="w-full bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm font-bold text-zinc-900 dark:text-white focus:outline-none focus:border-emerald-500/50"
                           placeholder="0917 XXX XXXX"
                         />
                       </div>
                       <div className="space-y-1.5">
-                         <label className="text-[10px] font-black uppercase text-zinc-500 pl-1">Complete Address</label>
+                         <label className="text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-500 pl-1">Complete Address</label>
                          <textarea
                            value={shippingAddress.street}
                            onChange={(e) => setShippingAddress({...shippingAddress, street: e.target.value})}
-                           className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500/50 h-24 resize-none"
+                           className="w-full bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm font-bold text-zinc-900 dark:text-white focus:outline-none focus:border-emerald-500/50 h-24 resize-none"
                            placeholder="House number, street, barangay..."
                          />
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6">
-                    <label className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-6 block border-b border-white/5 pb-4">Payment Selection</label>
+                  <div className="bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/5 rounded-3xl p-6">
+                    <label className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-[0.2em] mb-6 block border-b border-zinc-100 dark:border-white/5 pb-4">Payment Selection</label>
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { id: 'gcash', label: 'GCash', icon: Wallet },
@@ -636,7 +636,7 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                           key={method.id}
                           onClick={() => setPaymentMethod(method.id as any)}
                           className={`flex items-center gap-3 p-4 rounded-2xl border text-[10px] font-black uppercase tracking-widest transition-all ${
-                            paymentMethod === method.id ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white/5 border-white/10 text-white/40 hover:border-white/20'
+                            paymentMethod === method.id ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-white/40 hover:border-emerald-500/50'
                           }`}
                         >
                           <method.icon size={16} />
@@ -647,13 +647,13 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/5">
-                  <div className="flex justify-between items-end mb-8 bg-zinc-950 p-6 rounded-[32px] border border-white/5 shadow-inner">
+                <div className="pt-6 border-t border-zinc-100 dark:border-white/5">
+                  <div className="flex justify-between items-end mb-8 bg-zinc-100 dark:bg-zinc-950 p-6 rounded-[32px] border border-zinc-200 dark:border-white/5 shadow-inner">
                     <div>
-                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Total to Pay</p>
-                        <span className="text-2xl font-black italic tracking-tighter text-white leading-none">₱{totalPrice.toLocaleString()}</span>
+                        <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Total to Pay</p>
+                        <span className="text-2xl font-black italic tracking-tighter text-zinc-900 dark:text-white leading-none">₱{totalPrice.toLocaleString()}</span>
                     </div>
-                    <div className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black border border-emerald-500/20 uppercase tracking-[0.2em]">FREE SHIPPING</div>
+                    <div className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[10px] font-black border border-emerald-500/20 uppercase tracking-[0.2em]">FREE SHIPPING</div>
                   </div>
 
                   {checkoutSuccess ? (
@@ -704,40 +704,40 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full max-w-2xl max-h-[85vh] bg-zinc-900 border border-white/10 rounded-[40px] z-[120] shadow-2xl overflow-hidden flex flex-col"
+              className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full max-w-2xl max-h-[85vh] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-[40px] z-[120] shadow-2xl overflow-hidden flex flex-col"
             >
-              <div className="p-8 border-b border-white/5 flex items-center justify-between bg-zinc-900/50">
+              <div className="p-8 border-b border-zinc-100 dark:border-white/5 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900/50">
                 <div className="flex items-center gap-6">
-                  <div className="h-16 w-16 rounded-2xl overflow-hidden bg-black/20">
+                  <div className="h-16 w-16 rounded-2xl overflow-hidden bg-zinc-200 dark:bg-black/20 shadow-sm border border-zinc-100 dark:border-transparent">
                     <img src={selectedProductForReview.image} alt={selectedProductForReview.name} className="h-full w-full object-cover" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white leading-none mb-1">{selectedProductForReview.name}</h2>
-                    <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Product Reviews</p>
+                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-zinc-900 dark:text-white leading-none mb-1">{selectedProductForReview.name}</h2>
+                    <p className="text-xs font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Product Intelligence</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedProductForReview(null)}
-                  className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                  className="h-12 w-12 rounded-2xl bg-zinc-100 dark:bg-white/5 flex items-center justify-center text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white transition-colors"
                 >
                   <X size={20} />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-8 scrollbar-hide">
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 <ReviewSystem 
                   productId={selectedProductForReview.id} 
                   productName={selectedProductForReview.name} 
                 />
               </div>
-              <div className="p-8 bg-zinc-900/80 border-t border-white/5">
+              <div className="p-8 bg-zinc-50 dark:bg-zinc-900/80 border-t border-zinc-100 dark:border-white/5">
                 <button
                   onClick={() => {
                     handleItemSelect(activeCategory as any, selectedProductForReview);
                     setSelectedProductForReview(null);
                   }}
-                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-3xl transition-all shadow-[0_10px_30px_rgba(16,185,129,0.2)] uppercase tracking-tighter italic text-lg"
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-5 rounded-3xl transition-all shadow-lg shadow-emerald-500/20 uppercase tracking-widest italic text-lg active:scale-95"
                 >
-                  Select this component
+                  Confirm Hardware Selection
                 </button>
               </div>
             </motion.div>

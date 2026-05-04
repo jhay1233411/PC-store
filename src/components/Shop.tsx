@@ -193,19 +193,17 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               {showFilters ? 'Hide Logic' : 'Smart Filters'}
             </button>
 
-            {!isAdminOrOwner && (
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="relative p-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-white/10 transition-all shadow-sm"
-              >
-                <ShoppingCart size={20} />
-                {cart.length > 0 && (
-                   <span className="absolute -right-1 -top-1 bg-emerald-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
-                    {cart.length}
-                  </span>
-                )}
-              </button>
-            )}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-white/10 transition-all shadow-sm"
+            >
+              <ShoppingCart size={20} />
+              {cart.length > 0 && (
+                 <span className="absolute -right-1 -top-1 bg-emerald-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+                  {cart.length}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
@@ -372,16 +370,14 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                     <Star size={14} className="fill-current" />
                     Read User Reviews
                   </button>
-                  {!isAdminOrOwner && (
-                    <button
-                      onClick={() => onAddToCart(product)}
-                      disabled={(product.stock ?? 10) <= 0}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black py-3 text-sm font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all disabled:opacity-50 disabled:hover:bg-zinc-900 dark:disabled:hover:bg-white disabled:cursor-not-allowed italic shadow-lg shadow-black/10 dark:shadow-white/5 active:scale-95"
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                      {(product.stock ?? 10) > 0 ? 'Buy Component' : 'Sold Out'}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => onAddToCart(product)}
+                    disabled={(product.stock ?? 10) <= 0}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black py-3 text-sm font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all disabled:opacity-50 disabled:hover:bg-zinc-900 dark:disabled:hover:bg-white disabled:cursor-not-allowed italic shadow-lg shadow-black/10 dark:shadow-white/5 active:scale-95"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    {(product.stock ?? 10) > 0 ? 'Buy Component' : 'Sold Out'}
+                  </button>
                 </div>
               </div>
             </motion.div>

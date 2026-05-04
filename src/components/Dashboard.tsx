@@ -46,6 +46,7 @@ export default function Dashboard() {
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isAddAdminModalOpen, setIsAddAdminModalOpen] = useState(false);
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState<Partial<Product>>({
     name: '',
@@ -61,13 +62,19 @@ export default function Dashboard() {
   const [adminEmail, setAdminEmail] = useState('');
 
   useEffect(() => {
-    if (!profile || (profile.role !== 'owner' && profile.role !== 'admin')) return;
+    if (!profile) return;
+    if (profile.role !== 'owner' && profile.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
 
     const qOrders = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
     const unsubscribeOrders = onSnapshot(qOrders, (snapshot) => {
       setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order)));
+      setLoading(false);
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'orders');
+      setLoading(false);
     });
 
     const qProducts = query(collection(db, 'products'), orderBy('category', 'asc'));
@@ -123,6 +130,7 @@ export default function Dashboard() {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       await addDoc(collection(db, 'products'), {
         ...newProduct,
@@ -140,14 +148,18 @@ export default function Dashboard() {
         ramType: undefined,
         wattage: undefined
       });
+      alert('Product added successfully!');
     } catch (error) {
-      console.error('Error adding product:', error);
+      handleFirestoreError(error, OperationType.CREATE, 'products');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
+    setIsSubmitting(true);
     try {
       const { id, ...data } = editingProduct;
       await updateDoc(doc(db, 'products', id), {
@@ -156,8 +168,11 @@ export default function Dashboard() {
       });
       setIsEditProductModalOpen(false);
       setEditingProduct(null);
+      alert('Product updated successfully!');
     } catch (error) {
-      console.error('Error updating product:', error);
+      handleFirestoreError(error, OperationType.UPDATE, `products/${editingProduct.id}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -371,9 +386,9 @@ export default function Dashboard() {
         <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Product Inventory</h2>
         <button
           onClick={() => setIsAddProductModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-sm font-black transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+          className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl text-sm font-black transition-all shadow-lg shadow-emerald-500/20 active:scale-95 italic uppercase tracking-tighter"
         >
-          <Plus size={18} />
+          <Plus size={18} strokeWidth={3} />
           Add Product
         </button>
       </div>
@@ -448,6 +463,15 @@ export default function Dashboard() {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-zinc-500 font-black uppercase tracking-widest text-xs italic">Syncing Store Data...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 transition-colors duration-300">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
@@ -514,8 +538,9 @@ export default function Dashboard() {
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Add New Product</h2>
-                <button onClick={() => setIsAddProductModalOpen(false)} className="text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white">
-                  <XCircle size={24} />
+                <button onClick={() => setIsAddProductModalOpen(false)} className="text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white uppercase font-black text-[10px] flex items-center gap-2">
+                  <XCircle size={20} />
+                  Close
                 </button>
               </div>
               <form onSubmit={handleAddProduct} className="space-y-4">
@@ -669,9 +694,14 @@ export default function Dashboard() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-xl transition-all mt-4 shadow-lg shadow-emerald-500/20 active:scale-95 italic uppercase tracking-tighter"
+                  disabled={isSubmitting}
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-black py-4 rounded-xl transition-all mt-4 shadow-lg shadow-emerald-500/20 active:scale-95 italic uppercase tracking-tighter flex items-center justify-center gap-2"
                 >
-                  Create Product
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    'Create Product'
+                  )}
                 </button>
               </form>
             </motion.div>
@@ -696,9 +726,10 @@ export default function Dashboard() {
                     setIsEditProductModalOpen(false);
                     setEditingProduct(null);
                   }} 
-                  className="text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white"
+                  className="text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white uppercase font-black text-[10px] flex items-center gap-2"
                 >
-                  <XCircle size={24} />
+                  <XCircle size={20} />
+                  Close
                 </button>
               </div>
               <form onSubmit={handleUpdateProduct} className="space-y-4">
@@ -848,9 +879,14 @@ export default function Dashboard() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-xl transition-all mt-4 shadow-lg shadow-emerald-500/20 active:scale-95 italic uppercase tracking-tighter"
+                  disabled={isSubmitting}
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-black py-4 rounded-xl transition-all mt-4 shadow-lg shadow-emerald-500/20 active:scale-95 italic uppercase tracking-tighter flex items-center justify-center gap-2"
                 >
-                  Update Product
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    'Update Product'
+                  )}
                 </button>
               </form>
             </motion.div>
@@ -870,8 +906,9 @@ export default function Dashboard() {
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Add New Admin</h2>
-                <button onClick={() => setIsAddAdminModalOpen(false)} className="text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white">
-                  <XCircle size={24} />
+                <button onClick={() => setIsAddAdminModalOpen(false)} className="text-zinc-400 dark:text-white/40 hover:text-zinc-900 dark:hover:text-white uppercase font-black text-[10px] flex items-center gap-2">
+                  <XCircle size={20} />
+                  Close
                 </button>
               </div>
               <p className="text-zinc-500 dark:text-white/40 text-sm mb-6 font-medium">Enter the email address of the user you want to promote to Admin.</p>
