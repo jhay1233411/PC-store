@@ -24,7 +24,12 @@
         "price": { "type": "number" },
         "image": { "type": "string" },
         "description": { "type": "string" },
-        "stock": { "type": "number" }
+        "stock": { "type": "number" },
+        "socket": { "type": "string" },
+        "ramType": { "type": "string" },
+        "wattage": { "type": "number" },
+        "capacity": { "type": "string" },
+        "isHighlyRecommended": { "type": "boolean" }
       },
       "required": ["id", "name", "category", "price", "stock"]
     },
@@ -83,6 +88,58 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["productId", "userId", "userName", "rating", "comment"]
+    },
+    "prebuilts": {
+      "title": "Pre-Built PC",
+      "description": "Stores pre-assembled gaming rig information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "tier": { "type": "string", "enum": ["Entry", "Mid", "High", "Extreme"] },
+        "price": { "type": "number" },
+        "image": { "type": "string" },
+        "specs": {
+          "type": "object",
+          "properties": {
+            "cpu": { "type": "string" },
+            "gpu": { "type": "string" },
+            "ram": { "type": "string" },
+            "storage": { "type": "string" },
+            "monitor": { "type": "string" },
+            "peripherals": { "type": "string" }
+          }
+        },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "tier", "price", "image", "specs"]
+    },
+    "ai_messages": {
+      "title": "AI Chat Message",
+      "description": "Stores messages from the AI assistant chat",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "model"] },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "role", "content", "createdAt"]
+    },
+    "sales": {
+      "title": "Flash Sale",
+      "description": "Stores site-wide or product-specific flash sale data",
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "productIds": { "type": "array", "items": { "type": "string" } },
+        "discountPercentage": { "type": "number" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["message", "isActive", "createdAt"]
     }
   },
   "firestore": {
@@ -105,6 +162,18 @@
     "/reviews/{reviewId}": {
       "schema": "reviews",
       "description": "Product ratings and reviews"
+    },
+    "/prebuilts/{prebuiltId}": {
+      "schema": "prebuilts",
+      "description": "Pre-built PC listings"
+    },
+    "/ai_messages/{messageId}": {
+      "schema": "ai_messages",
+      "description": "AI Chat history messages"
+    },
+    "/sales/{saleId}": {
+      "schema": "sales",
+      "description": "Flash sale configuration"
     }
   }
 }

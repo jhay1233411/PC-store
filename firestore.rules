@@ -32,9 +32,40 @@ service cloud.firestore {
       );
     }
 
+    function isValidOrder(data) {
+      return data.keys().hasAll(['userId', 'items', 'totalPrice', 'shippingAddress', 'status', 'createdAt']) &&
+             data.userId is string &&
+             data.items is list &&
+             data.totalPrice is number &&
+             data.status is string &&
+             data.createdAt is string;
+    }
+
+    function isValidSale(data) {
+      return data.keys().hasAll(['message', 'isActive', 'createdAt']) &&
+             data.message is string && data.message.size() <= 500 &&
+             data.isActive is bool &&
+             data.createdAt is string &&
+             (!('productIds' in data) || data.productIds is list) &&
+             (!('discountPercentage' in data) || (data.discountPercentage is int || data.discountPercentage is float)) &&
+             (!('expiresAt' in data) || data.expiresAt is string);
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'category', 'price', 'stock']) &&
+             data.name is string && data.name.size() <= 200 &&
+             data.category is string &&
+             data.price is number &&
+             data.stock is number &&
+             (!('socket' in data) || data.socket is string) &&
+             (!('ramType' in data) || data.ramType is string) &&
+             (!('wattage' in data) || data.wattage is number) &&
+             (!('capacity' in data) || data.capacity is string) &&
+             (!('isHighlyRecommended' in data) || data.isHighlyRecommended is bool);
+    }
+
     function isValidReview(data) {
       return data.keys().hasAll(['productId', 'userId', 'userName', 'rating', 'comment', 'createdAt']) &&
-             data.keys().size() == 6 &&
              data.productId is string && data.productId.size() <= 128 &&
              data.userId is string && data.userId.size() <= 128 &&
              data.userName is string && data.userName.size() <= 100 &&
@@ -61,18 +92,32 @@ service cloud.firestore {
     
     match /products/{productId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isAdmin() && isValidProduct(request.resource.data);
     }
     
     match /orders/{orderId} {
       allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
-      allow create: if isAuthenticated();
-      allow update: if isAdmin();
+      allow create: if isAuthenticated() && isValidOrder(request.resource.data);
+      allow update: if isAdmin() && isValidOrder(request.resource.data);
       allow delete: if isSuperOwner();
     }
 
     match /pc_builds/{buildId} {
       allow read, write: if isAuthenticated() && (request.auth.uid == (resource == null ? request.resource.data.userId : resource.data.userId) || isAdmin());
+    }
+
+    match /sales/{saleId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidSale(request.resource.data);
+    }
+
+    match /prebuilts/{prebuiltId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /ai_messages/{messageId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == (resource == null ? request.resource.data.userId : resource.data.userId);
     }
 
     match /reviews/{reviewId} {

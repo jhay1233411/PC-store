@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Cpu, Layout, ArrowRight, CheckCircle2, ChevronRight, HardDrive, ShoppingCart, Trash2, X, Wallet, CreditCard, Landmark, Loader2, CheckCircle, Monitor, Zap, Box, Wind, Search, ArrowLeft, Star, Info, Shield } from 'lucide-react';
+import { Cpu, Layout, ArrowRight, CheckCircle2, ChevronRight, HardDrive, ShoppingCart, Trash2, X, Wallet, CreditCard, Landmark, Loader2, CheckCircle, Monitor, Zap, Box, Wind, Search, ArrowLeft, Star, Info, Shield, Sparkles, Mouse, Keyboard, Headphones, Gamepad2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PCBuild, Product, Order, ShippingAddress } from '../types';
+import { PCBuild, Product, Order, ShippingAddress, FlashSale } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
-import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, where } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firestore-error';
 import ReviewSystem from './ReviewSystem';
-
-// 1. MOCK DATA OBJECT
 const MOCK_DATA = {
   cpus: [
     { id: 'cpu-1', name: 'Intel Core i9-14900K', socket: 'LGA1700', price: 34500, category: 'CPU' as Product['category'], image: 'https://picsum.photos/seed/cpu1/400/400', description: '24 Cores, 32 Threads, up to 6.0 GHz' },
@@ -60,6 +58,7 @@ interface PCBuilderProps {
 export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) {
   const { user, profile, setAuthModalOpen } = useAuth();
   const [dbProducts, setDbProducts] = useState<Product[]>([]);
+  const [activeSale, setActiveSale] = useState<FlashSale | null>(null);
   
   // Fetch live products from DB
   React.useEffect(() => {
@@ -67,8 +66,33 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setDbProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product)));
     });
-    return () => unsubscribe();
+
+    // Fetch active Flash Sale
+    const salesQ = query(collection(db, 'sales'), where('isActive', '==', true));
+    const salesUnsubscribe = onSnapshot(salesQ, (snapshot) => {
+      if (!snapshot.empty) {
+        setActiveSale({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as FlashSale);
+      } else {
+        setActiveSale(null);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      salesUnsubscribe();
+    };
   }, []);
+
+  const getProductPrice = (product: Product) => {
+    if (activeSale && activeSale.productIds?.includes(product.id) && activeSale.discountPercentage) {
+      return product.price * (1 - activeSale.discountPercentage / 100);
+    }
+    return product.price;
+  };
+
+  const isProductOnSale = (productId: string) => {
+    return activeSale && activeSale.productIds?.includes(productId);
+  };
 
   // Selection states
   const [selections, setSelections] = useState<Record<string, any>>(initialBuild || {
@@ -80,9 +104,24 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
     PSU: null,
     Case: null,
     Cooling: null,
+    Monitor: null,
+    Peripherals_1: null,
+    Peripherals_2: null,
+    Peripherals_3: null,
   });
 
-  const [activeCategory, setActiveCategory] = useState<Product['category'] | null>(null);
+  // Reactive updates for when we navigate from My Builds or Pre-Builts
+  React.useEffect(() => {
+    if (initialBuild) {
+      setSelections(prev => {
+        // Only update if the initialBuild is different from current selections
+        // to avoid resetting user progress if they navigate away and back
+        return initialBuild;
+      });
+    }
+  }, [initialBuild]);
+
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProductForReview, setSelectedProductForReview] = useState<any>(null);
 
@@ -102,26 +141,38 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
     zipCode: ''
   });
 
-  const categories: { id: Product['category']; label: string; icon: any; guide: string }[] = [
-    { id: 'CPU', label: 'Processor', icon: Cpu, guide: 'Slotted into the center of the motherboard. The brain of your PC.' },
-    { id: 'Motherboard', label: 'Motherboard', icon: Layout, guide: 'The main circuit board that connects all components together.' },
-    { id: 'RAM', label: 'Memory (RAM)', icon: HardDrive, guide: 'Narrow sticks inserted into slots next to the CPU.' },
-    { id: 'GPU', label: 'Graphics Card', icon: Monitor, guide: 'Plugged into the long horizontal slot on the bottom half of the board.' },
-    { id: 'Storage', label: 'Storage (SSD)', icon: HardDrive, guide: 'Small flat chips (M.2) or boxes mounted in drive bays.' },
-    { id: 'PSU', label: 'Power Supply', icon: Zap, guide: 'The heavy box that powers everything, usually at the bottom-rear.' },
-    { id: 'Case', label: 'Case / Chassis', icon: Box, guide: 'The structural skeleton that houses and protects all your parts.' },
-    { id: 'Cooling', label: 'CPU Cooling', icon: Wind, guide: 'Sits directly on top of the CPU to keep it from overheating.' },
+  const categories: { id: string; category: Product['category']; label: string; icon: any; guide: string }[] = [
+    { id: 'CPU', category: 'CPU', label: 'Processor', icon: Cpu, guide: 'Slotted into the center of the motherboard. The brain of your PC.' },
+    { id: 'Motherboard', category: 'Motherboard', label: 'Motherboard', icon: Layout, guide: 'The main circuit board that connects all components together.' },
+    { id: 'RAM', category: 'RAM', label: 'Memory (RAM)', icon: HardDrive, guide: 'Narrow sticks inserted into slots next to the CPU.' },
+    { id: 'GPU', category: 'GPU', label: 'Graphics Card', icon: Monitor, guide: 'Plugged into the long horizontal slot on the bottom half of the board.' },
+    { id: 'Storage', category: 'Storage', label: 'Storage (SSD)', icon: HardDrive, guide: 'Small flat chips (M.2) or boxes mounted in drive bays.' },
+    { id: 'PSU', category: 'PSU', label: 'Power Supply', icon: Zap, guide: 'The heavy box that powers everything, usually at the bottom-rear.' },
+    { id: 'Case', category: 'Case', label: 'Case / Chassis', icon: Box, guide: 'The structural skeleton that houses and protects all your parts.' },
+    { id: 'Cooling', category: 'Cooling', label: 'CPU Cooling', icon: Wind, guide: 'Sits directly on top of the CPU to keep it from overheating.' },
+    { id: 'Monitor', category: 'Monitor', label: 'Monitor', icon: Monitor, guide: 'The screen where you see all the action.' },
+    { id: 'Peripherals_1', category: 'Peripherals', label: 'Peripherals 1', icon: Mouse, guide: 'Gaming mouse or precision input device.' },
+    { id: 'Peripherals_2', category: 'Peripherals', label: 'Peripherals 2', icon: Gamepad2, guide: 'Mechanical keyboard, gaming controller, or additional gear.' },
+    { id: 'Peripherals_3', category: 'Peripherals', label: 'Peripherals 3', icon: Headphones, guide: 'Gaming headset or audio equipment.' },
   ];
 
   // Logic: Get items for the active category with compatibility filtering
-  const getAvailableItems = (category: Product['category']) => {
+  const getAvailableItems = (slotId: string) => {
+    const category = categories.find(c => c.id === slotId)?.category;
+    if (!category) return [];
+
     // RULE 3: If no CPU is selected, do not show Motherboards or RAM
     if ((category === 'Motherboard' || category === 'RAM') && !selections.CPU) {
       return [];
     }
 
     // Filter live database products first
-    const liveItems = dbProducts.filter(p => p.category === category);
+    const liveItems = dbProducts.filter(p => {
+      if (category === 'Peripherals') {
+        return ['Mouse', 'Keyboard', 'Headset', 'Peripherals'].includes(p.category);
+      }
+      return p.category === category;
+    });
     
     let items: any[] = liveItems.length > 0 ? liveItems : [];
     
@@ -162,16 +213,115 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
     return items;
   };
 
-  const handleItemSelect = (category: Product['category'], item: any) => {
-    const newSelections = { ...selections, [category]: item };
+  const getRecommendationInfo = (item: any, category: string): { isRecommended: boolean; reason: string } | null => {
+    const currentCPU = selections.CPU;
+    const currentMobo = selections.Motherboard;
+    const currentGPU = selections.GPU;
+
+    // CPU -> Motherboard recommendations
+    if (category === 'Motherboard' && currentCPU) {
+      if (currentCPU.socket === 'AM5' && (item.name.includes('X670') || item.name.includes('B650E') || item.name.includes('Hero'))) 
+        return { isRecommended: true, reason: 'High-end AM5 boards provide superior power delivery and PCIe 5.0 lanes for your Ryzen 7000/9000 CPU.' };
+      if (currentCPU.socket === 'LGA1700' && (item.name.includes('Z790') || item.name.includes('Z690') || item.name.includes('Maximus')))
+        return { isRecommended: true, reason: 'Z-Series chipsets are required to fully unlock the overclocking potential of K-series Intel CPUs.' };
+      if (currentCPU.socket === 'AM4' && (item.name.includes('B550') || item.name.includes('X570')))
+        return { isRecommended: true, reason: 'Provides the ideal balance of VRM quality and high-speed storage support for Zen 3 processors.' };
+    }
+
+    // Thermal Matching: CPU -> CPU Cooling
+    if (category === 'Cooling' && currentCPU) {
+      const isExtremeCPU = currentCPU.name.includes('i9') || currentCPU.name.includes('Ryzen 9') || currentCPU.name.includes('X3D');
+      if (isExtremeCPU && (item.name.includes('360') || item.name.includes('420') || item.name.includes('Liquid') || item.name.includes('Elite')))
+        return { isRecommended: true, reason: 'Flagship processors generate extreme heat at peak loads; 360mm+ liquid cooling is mandatory for thermal stability.' };
+      if (!isExtremeCPU && (item.name.includes('NH-D15') || item.name.includes('AK620') || item.name.includes('Dark Rock')))
+        return { isRecommended: true, reason: 'Premium air cooling provides reliable, lifespan-matching performance for this power bracket with zero pump fail risk.' };
+    }
+
+    // Memory Optimization: Motherboard -> RAM
+    if (category === 'RAM' && currentMobo) {
+       if (currentMobo.ramType === 'DDR5') {
+         if (item.name.includes('6000MHz') || item.name.includes('6400MHz'))
+           return { isRecommended: true, reason: 'This frequency range is the "Sweet Spot" for modern memory controllers, maximizing bandwidth without sacrificing stability.' };
+         if (item.name.includes('32GB') && (currentCPU?.name.includes('i9') || currentCPU?.name.includes('Ryzen 9')))
+           return { isRecommended: true, reason: 'High-core-count tasks benefit significantly from 32GB+ capacity for professional workloads and heavy multitasking.' };
+       }
+       if (currentMobo.ramType === 'DDR4') {
+         if (item.name.includes('3600MHz') && item.name.includes('CL16'))
+           return { isRecommended: true, reason: '3600MHz CL16 is the peak performance-per-peso choice for DDR4 platforms like AM4.' };
+       }
+    }
+
+    // Performance Pairing: CPU -> GPU
+    if (category === 'GPU' && currentCPU) {
+      const isHighEndCPU = currentCPU.name.includes('i9') || currentCPU.name.includes('Ryzen 9') || currentCPU.name.includes('7800X3D');
+      if (isHighEndCPU && (item.name.includes('5090') || item.name.includes('5080') || item.name.includes('4090') || item.name.includes('7900 XTX')))
+        return { isRecommended: true, reason: 'Ultimate gaming synergy. This GPU-CPU combo eliminates bottlenecks even at high frame rates in 4K resolution.' };
+      if (!isHighEndCPU && (item.name.includes('5070') || item.name.includes('4070') || item.name.includes('7800 XT') || item.name.includes('7700')))
+        return { isRecommended: true, reason: 'Balanced performance tier. Perfect for high-refresh 1440p gaming without overspending on unused silicon overhead.' };
+    }
+
+    // Power Delivery: GPU -> PSU
+    if (category === 'PSU' && currentGPU) {
+      const isPowerHungry = currentGPU.name.includes('5090') || currentGPU.name.includes('5080') || currentGPU.name.includes('4090');
+      if (isPowerHungry && (item.name.includes('1000W') || item.name.includes('1200W') || item.name.includes('Platinum')))
+        return { isRecommended: true, reason: 'High-transient loads from 400W+ GPUs require high-efficiency 1000W+ PSUs to prevent system shutdowns.' };
+      if (!isPowerHungry && (item.name.includes('750W') || item.name.includes('850W') || item.name.includes('Gold')))
+        return { isRecommended: true, reason: 'Efficient 750-850W units provide plenty of headroom for mid-to-high tier builds with safe operating margins.' };
+    }
+
+    // Case Airflow: GPU/Cooler -> Case
+    if (category === 'Case') {
+      const currentGPU = selections.GPU;
+      const currentCooler = selections.Cooling;
+      if (currentGPU && (currentGPU.name.includes('5090') || currentGPU.name.includes('5080')) && (item.name.includes('H9') || item.name.includes('Dynamic') || item.name.includes('Meshify')))
+        return { isRecommended: true, reason: 'Large triple-fan GPUs and high thermal loads require high-airflow chassis with plenty of clearance.' };
+      if (currentCooler && currentCooler.name.includes('360') && (item.name.includes('O11') || item.name.includes('H9') || item.name.includes('5000D')))
+        return { isRecommended: true, reason: 'Chassis with dedicated 360mm radiator support for optimal top or side mounting.' };
+    }
+
+    // Storage: Speed highlights
+    if (category === 'Storage') {
+      if (item.name.includes('990 Pro') || item.name.includes('Gen5') || item.name.includes('T700') || item.name.includes('KC3000'))
+        return { isRecommended: true, reason: 'Ultra-low latency and peak IOPS for lightning-fast asset loading in modern gaming titles.' };
+    }
+
+    // Initial Best Choices
+    if (!currentCPU && category === 'CPU') {
+      if (item.name.includes('7800X3D')) return { isRecommended: true, reason: 'Currently widely regarded as the fastest gaming processor globally due to 3D V-Cache.' };
+      if (item.name.includes('14900K')) return { isRecommended: true, reason: 'The powerhouse of Intel LGA1700, ideal for combined gaming and professional content creation.' };
+    }
+
+    // Peripherals recommendations
+    if (category === 'Monitor' && currentGPU) {
+      if ((currentGPU.name.includes('5090') || currentGPU.name.includes('4090')) && (item.name.includes('4K') || item.name.includes('144Hz')))
+        return { isRecommended: true, reason: 'A high-refresh 4K monitor is the only way to fully appreciate the power of your enthusiast GPU.' };
+      if (item.name.includes('1440p') || item.name.includes('165Hz'))
+        return { isRecommended: true, reason: '1440p High Refresh Rate is the modern gold standard for smooth, sharp gaming.' };
+    }
+
+    if (category === 'Peripherals') {
+      if (item.category === 'Mouse' && item.name.includes('Wireless')) {
+        return { isRecommended: true, reason: 'Ultra-low latency wireless tech provides maximum freedom of movement for competitive play.' };
+      }
+      if (item.category === 'Keyboard' && (item.name.includes('Mechanical') || item.name.includes('TKL'))) {
+        return { isRecommended: true, reason: 'Mechanical switches provide the tactile feedback and durability required for intensive gaming.' };
+      }
+    }
+
+    return null;
+  };
+
+  const handleItemSelect = (slotId: string, item: any) => {
+    const discountedItem = { ...item, price: getProductPrice(item) };
+    const newSelections = { ...selections, [slotId]: discountedItem };
 
     // Cascade resets for compatibility
-    if (category === 'CPU') {
+    if (slotId === 'CPU') {
       if (item && selections.Motherboard && item.socket !== selections.Motherboard.socket) {
         newSelections.Motherboard = null;
         newSelections.RAM = null;
       }
-    } else if (category === 'Motherboard') {
+    } else if (slotId === 'Motherboard') {
       if (item && selections.CPU && item.socket !== selections.CPU.socket) {
         newSelections.CPU = null;
       }
@@ -189,7 +339,7 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
     setSelections({ ...selections, [category]: null });
   };
 
-  const totalPrice = Object.values(selections).reduce((acc, curr) => acc + (curr?.price || 0), 0);
+  const totalPrice: number = Object.values(selections).reduce<number>((acc, curr: any) => acc + (curr?.price || 0), 0);
 
   const handleSaveBuild = async () => {
     if (!user) {
@@ -254,6 +404,10 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
         PSU: null,
         Case: null,
         Cooling: null,
+        Monitor: null,
+        Peripherals_1: null,
+        Peripherals_2: null,
+        Peripherals_3: null,
       });
       setTimeout(() => {
         setCheckoutSuccess(false);
@@ -291,7 +445,7 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
               {saveSuccess ? 'BUILD SAVED!' : 'SAVE CONFIG'}
             </button>
             <button
-              onClick={() => setSelections({ CPU: null, Motherboard: null, RAM: null, GPU: null, Storage: null, PSU: null, Case: null, Cooling: null })}
+              onClick={() => setSelections({ CPU: null, Motherboard: null, RAM: null, GPU: null, Storage: null, PSU: null, Case: null, Cooling: null, Monitor: null, Peripherals_1: null, Peripherals_2: null, Peripherals_3: null })}
               className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-zinc-400 dark:text-zinc-500 hover:text-red-500 hover:bg-red-500/10 transition-all shadow-sm"
               title="Clear All"
             >
@@ -444,70 +598,124 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-8 max-h-[700px] overflow-y-auto scrollbar-hide min-h-[300px]">
-                  {getAvailableItems(activeCategory!).length === 0 ? (
-                    <div className="col-span-full flex flex-col items-center justify-center p-20 text-center">
-                      <div className="h-20 w-20 rounded-full bg-zinc-100 dark:bg-white/5 flex items-center justify-center text-zinc-300 dark:text-zinc-500 mb-6">
-                        <Box size={40} className="opacity-20" />
-                      </div>
-                      <h3 className="text-xl font-bold text-zinc-400 dark:text-white mb-2 italic uppercase">No Compatible Parts Found</h3>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-500 max-w-xs mx-auto">
-                        We couldn't find any compatible {activeCategory} items for your current selection. 
-                        Try changing your CPU or Motherboard to see more options.
-                      </p>
-                    </div>
-                  ) : getAvailableItems(activeCategory!).map((item) => {
-                    const isSelected = selections[activeCategory] === item;
+                <div className="p-8 space-y-8 max-h-[700px] overflow-y-auto custom-scrollbar min-h-[300px]">
+                  {(() => {
+                    const activeCatObj = categories.find(c => c.id === activeCategory);
+                    const category = activeCatObj?.category;
+                    if (!category) return null;
+                    
+                    const availableItems = getAvailableItems(activeCategory!);
+                    const recommended = availableItems.filter(item => {
+                      const recInfo = getRecommendationInfo(item, category);
+                      return recInfo?.isRecommended || item.isHighlyRecommended;
+                    });
+                    const others = availableItems.filter(item => {
+                      const recInfo = getRecommendationInfo(item, category);
+                      return !recInfo?.isRecommended && !item.isHighlyRecommended;
+                    });
+
+                    if (availableItems.length === 0) {
+                      return (
+                        <div className="flex flex-col items-center justify-center p-20 text-center">
+                          <div className="h-20 w-20 rounded-full bg-zinc-100 dark:bg-white/5 flex items-center justify-center text-zinc-300 dark:text-zinc-500 mb-6">
+                            <Box size={40} className="opacity-20" />
+                          </div>
+                          <h3 className="text-xl font-bold text-zinc-400 dark:text-white mb-2 italic uppercase">No Compatible Parts Found</h3>
+                          <p className="text-sm text-zinc-500 dark:text-zinc-500 max-w-xs mx-auto">
+                            We couldn't find any compatible {categories.find(c => c.id === activeCategory)?.label} items for your current selection. 
+                            Try changing your CPU or Motherboard to see more options.
+                          </p>
+                        </div>
+                      );
+                    }
+
                     return (
-                      <div
-                        key={item.id}
-                        onClick={() => handleItemSelect(activeCategory, item)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            handleItemSelect(activeCategory, item);
-                          }
-                        }}
-                        className={`group relative flex items-center gap-6 p-6 rounded-[32px] border transition-all text-left cursor-pointer ${isSelected ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white hover:border-emerald-500/50 hover:bg-zinc-50 dark:hover:bg-white/[0.03] shadow-sm'}`}
-                      >
-                        <div className="h-24 w-24 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-black/20 flex-shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                           <img src={item.image} alt={item.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-lg font-bold leading-tight mb-1 truncate">{item.name}</h4>
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                             {item.socket && (
-                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isSelected ? 'bg-black/20 text-black' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-500'}`}>
-                                 {item.socket}
-                               </span>
-                             )}
-                             {item.ramType && (
-                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isSelected ? 'bg-black/20 text-black' : 'bg-blue-500/10 text-blue-600 dark:text-blue-500'}`}>
-                                 {item.ramType}
-                               </span>
-                             )}
+                      <>
+                        {recommended.length > 0 && (
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                              <Sparkles size={16} className="text-emerald-500" />
+                              <h3 className="text-xs font-black text-emerald-500 uppercase tracking-[0.2em] italic">The Highly Recommended Component In My Shop</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {recommended.map(item => {
+                                const isSelected = selections[activeCategory!] === item;
+                                const activeCatObj = categories.find(c => c.id === activeCategory);
+                                const rec = getRecommendationInfo(item, activeCatObj?.category || '');
+                                return (
+                                  <div
+                                    key={item.id}
+                                    onClick={() => handleItemSelect(activeCategory!, item)}
+                                    className={`group relative flex flex-col p-6 rounded-[32px] border transition-all text-left cursor-pointer ${isSelected ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-emerald-500/[0.03] border-emerald-500/30 text-zinc-900 dark:text-white hover:border-emerald-500 hover:bg-emerald-500/[0.06] shadow-sm'}`}
+                                  >
+                                    <div className="flex items-center gap-6 mb-4">
+                                      <div className="h-20 w-20 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-black/20 flex-shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                                        <img src={item.image} alt={item.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="text-lg font-bold leading-tight truncate">{item.name}</h4>
+                                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                                          {item.socket && <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[10px] font-black uppercase tracking-tighter">{item.socket}</span>}
+                                          {item.capacity && <span className="px-1.5 py-0.5 rounded bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 text-[10px] font-black uppercase tracking-tighter">{item.capacity}</span>}
+                                          {item.isHighlyRecommended && <span className="px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 text-[8px] font-black uppercase tracking-tighter">Shop Pick</span>}
+                                          {isProductOnSale(item.id) ? (
+                                            <span className="text-sm font-black text-emerald-600 dark:text-emerald-500 italic">₱{getProductPrice(item).toLocaleString()}</span>
+                                          ) : (
+                                            <span className={`text-sm font-black italic ${isSelected ? 'text-black' : 'text-zinc-500'}`}>₱{item.price.toLocaleString()}</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    {(rec?.reason || item.description) && (
+                                      <div className={`p-4 rounded-2xl text-[10px] leading-relaxed font-medium flex items-start gap-3 ${isSelected ? 'bg-black/10 text-black' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-500'}`}>
+                                        <Info size={14} className="flex-shrink-0 mt-0.5" />
+                                        <p className="italic">{rec?.reason || item.description}</p>
+                                      </div>
+                                    )}
+                                    {isSelected && <div className="absolute top-4 right-4"><CheckCircle2 size={24} /></div>}
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                          <p className={`text-xs mb-3 line-clamp-1 italic ${isSelected ? 'text-black/60' : 'text-zinc-500'}`}>{item.description}</p>
-                          <div className="flex items-center justify-between">
-                             <div className="flex items-center gap-3">
-                                <p className={`text-xl font-black tracking-tighter italic ${isSelected ? 'text-black' : 'text-emerald-600 dark:text-emerald-500'}`}>₱{item.price.toLocaleString()}</p>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedProductForReview(item);
-                                  }}
-                                  className={`p-2 rounded-xl border transition-all ${isSelected ? 'bg-black/20 border-black/10 text-black hover:bg-black/30' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-emerald-500 hover:bg-emerald-500 hover:text-black hover:border-emerald-500'}`}
+                        )}
+
+                        <div className="space-y-4 pt-4 border-t border-zinc-100 dark:border-white/5">
+                          <h3 className="text-xs font-black text-zinc-400 dark:text-white/40 uppercase tracking-[0.2em] italic">All Compatible Parts</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {others.map(item => {
+                              const isSelected = selections[activeCategory!] === item;
+                              return (
+                                <div
+                                  key={item.id}
+                                  onClick={() => handleItemSelect(activeCategory!, item)}
+                                  className={`group relative flex items-center gap-6 p-6 rounded-[32px] border transition-all text-left cursor-pointer ${isSelected ? 'bg-emerald-500 border-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white hover:border-emerald-500/50 hover:bg-zinc-50 dark:hover:bg-white/[0.03] shadow-sm'}`}
                                 >
-                                  <Star size={14} className="fill-current" />
-                                </button>
-                             </div>
-                             {isSelected && <CheckCircle2 size={24} />}
+                                  <div className="h-16 w-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-black/20 flex-shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-base font-bold leading-tight mb-1 truncate">{item.name}</h4>
+                                    <div className="flex items-center justify-between">
+                                      {isProductOnSale(item.id) ? (
+                                        <div className="flex flex-col">
+                                          <span className="text-[10px] text-red-500 line-through opacity-50 font-black italic">₱{item.price.toLocaleString()}</span>
+                                          <p className={`text-lg font-black tracking-tighter italic ${isSelected ? 'text-black' : 'text-emerald-600 dark:text-emerald-500'}`}>₱{getProductPrice(item).toLocaleString()}</p>
+                                        </div>
+                                      ) : (
+                                        <p className={`text-lg font-black tracking-tighter italic ${isSelected ? 'text-black' : 'text-zinc-900 dark:text-white'}`}>₱{item.price.toLocaleString()}</p>
+                                      )}
+                                      {isSelected && <CheckCircle2 size={20} />}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
-                      </div>
+                      </>
                     );
-                  })}
+                  })()}
                 </div>
               </motion.div>
             )}
@@ -563,6 +771,8 @@ export default function PCBuilder({ onNavigate, initialBuild }: PCBuilderProps) 
                 </p>
              </div>
            </div>
+
+
         </div>
       </div>
 

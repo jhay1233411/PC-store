@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, Search, Filter, Trash2, X, CreditCard, CheckCircle2, Wallet, Landmark, Star, AlertTriangle, Monitor, Cpu, HardDrive } from 'lucide-react';
 import { PRODUCTS } from '../constants';
-import { Product, Order, Notification, ShippingAddress } from '../types';
+import { Product, Order, Notification, ShippingAddress, FlashSale } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import ReviewSystem from './ReviewSystem';
 import { db } from '../firebase';
@@ -27,6 +27,7 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
   const [showFilters, setShowFilters] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [activeSale, setActiveSale] = useState<FlashSale | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<Order['paymentMethod']>('gcash');
@@ -51,8 +52,33 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'products');
     });
-    return () => unsubscribe();
+
+    // Fetch active Flash Sale
+    const salesQ = query(collection(db, 'sales'), where('isActive', '==', true));
+    const salesUnsubscribe = onSnapshot(salesQ, (snapshot) => {
+      if (!snapshot.empty) {
+        setActiveSale({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as FlashSale);
+      } else {
+        setActiveSale(null);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      salesUnsubscribe();
+    };
   }, []);
+
+  const getProductPrice = (product: Product) => {
+    if (activeSale && activeSale.productIds?.includes(product.id) && activeSale.discountPercentage) {
+      return product.price * (1 - activeSale.discountPercentage / 100);
+    }
+    return product.price;
+  };
+
+  const isProductOnSale = (productId: string) => {
+    return activeSale && activeSale.productIds?.includes(productId);
+  };
 
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
@@ -193,17 +219,19 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
               {showFilters ? 'Hide Logic' : 'Smart Filters'}
             </button>
 
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="relative p-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-white/10 transition-all shadow-sm"
-            >
-              <ShoppingCart size={20} />
-              {cart.length > 0 && (
-                 <span className="absolute -right-1 -top-1 bg-emerald-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
-                  {cart.length}
-                </span>
-              )}
-            </button>
+            {!isAdminOrOwner && (
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className="relative p-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-white/10 transition-all shadow-sm"
+              >
+                <ShoppingCart size={20} />
+                {cart.length > 0 && (
+                   <span className="absolute -right-1 -top-1 bg-emerald-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+                    {cart.length}
+                  </span>
+                )}
+              </button>
+            )}
           </div>
         </div>
 
@@ -335,7 +363,14 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                     {product.category}
                   </span>
                   <div className="flex flex-col items-end">
-                    <span className="text-lg font-black text-zinc-900 dark:text-white">₱{product.price.toLocaleString()}</span>
+                    {isProductOnSale(product.id) ? (
+                      <>
+                        <span className="text-[10px] font-black text-red-500 line-through opacity-50 italic">₱{product.price.toLocaleString()}</span>
+                        <span className="text-lg font-black text-emerald-600 dark:text-emerald-500 italic">₱{getProductPrice(product).toLocaleString()}</span>
+                      </>
+                    ) : (
+                      <span className="text-lg font-black text-zinc-900 dark:text-white group-hover:text-emerald-500 transition-colors">₱{product.price.toLocaleString()}</span>
+                    )}
                     <span className={`text-[10px] font-black uppercase tracking-tighter ${(product.stock ?? 10) > 0 ? 'text-zinc-400 dark:text-white/40' : 'text-red-500'}`}>
                       {(product.stock ?? 10) > 0 ? `${product.stock ?? 10} available` : 'Out of Stock'}
                     </span>
@@ -370,14 +405,16 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                     <Star size={14} className="fill-current" />
                     Read User Reviews
                   </button>
-                  <button
-                    onClick={() => onAddToCart(product)}
-                    disabled={(product.stock ?? 10) <= 0}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black py-3 text-sm font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all disabled:opacity-50 disabled:hover:bg-zinc-900 dark:disabled:hover:bg-white disabled:cursor-not-allowed italic shadow-lg shadow-black/10 dark:shadow-white/5 active:scale-95"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    {(product.stock ?? 10) > 0 ? 'Buy Component' : 'Sold Out'}
-                  </button>
+                  {!isAdminOrOwner && (
+                    <button
+                      onClick={() => onAddToCart({ ...product, price: getProductPrice(product) })}
+                      disabled={(product.stock ?? 10) <= 0}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black py-3 text-sm font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all disabled:opacity-50 disabled:hover:bg-zinc-900 dark:disabled:hover:bg-white disabled:cursor-not-allowed italic shadow-lg shadow-black/10 dark:shadow-white/5 active:scale-95"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      {(product.stock ?? 10) > 0 ? 'Buy Component' : 'Sold Out'}
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -629,8 +666,18 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                       <h2 className="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase leading-tight mt-1">{selectedProduct.name}</h2>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter">₱{selectedProduct.price.toLocaleString()}</p>
-                      <p className="text-[10px] text-zinc-400 uppercase font-black tracking-widest">Market Price</p>
+                      {isProductOnSale(selectedProduct.id) ? (
+                        <>
+                          <p className="text-sm text-red-500 line-through opacity-50 font-black italic">₱{selectedProduct.price.toLocaleString()}</p>
+                          <p className="text-2xl font-black text-emerald-600 dark:text-emerald-500 italic tracking-tighter">₱{getProductPrice(selectedProduct).toLocaleString()}</p>
+                          <p className="text-[10px] text-emerald-500 uppercase font-black tracking-widest">FLASH SALE -{activeSale?.discountPercentage}%</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter">₱{selectedProduct.price.toLocaleString()}</p>
+                          <p className="text-[10px] text-zinc-400 uppercase font-black tracking-widest">Market Price</p>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -659,18 +706,20 @@ export default function Shop({ onAddToCart, onNavigate, cart, setCart }: ShopPro
                     productName={selectedProduct.name} 
                   />
 
-                  <div className="mt-12">
-                    <button
-                      onClick={() => {
-                        onAddToCart(selectedProduct);
-                        setSelectedProduct(null);
-                      }}
-                      disabled={(selectedProduct.stock ?? 10) <= 0}
-                      className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 italic uppercase tracking-widest active:scale-95"
-                    >
-                      SECURE COMPONENT
-                    </button>
-                  </div>
+                  {!isAdminOrOwner && (
+                    <div className="mt-12">
+                      <button
+                        onClick={() => {
+                          onAddToCart(selectedProduct);
+                          setSelectedProduct(null);
+                        }}
+                        disabled={(selectedProduct.stock ?? 10) <= 0}
+                        className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 italic uppercase tracking-widest active:scale-95"
+                      >
+                        SECURE COMPONENT
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

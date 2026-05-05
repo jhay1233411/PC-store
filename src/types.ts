@@ -11,7 +11,7 @@ export interface UserProfile {
 export interface Product {
   id: string;
   name: string;
-  category: 'CPU' | 'GPU' | 'RAM' | 'Storage' | 'Motherboard' | 'PSU' | 'Case' | 'Cooling';
+  category: 'CPU' | 'GPU' | 'RAM' | 'Storage' | 'Motherboard' | 'PSU' | 'Case' | 'Cooling' | 'Monitor' | 'Mouse' | 'Keyboard' | 'Headset' | 'Peripherals' | 'Pre-Built';
   price: number;
   image: string;
   description: string;
@@ -20,6 +20,8 @@ export interface Product {
   socket?: string; // e.g., 'AM4', 'LGA1700'
   ramType?: 'DDR4' | 'DDR5';
   wattage?: number; // PSU output or Component draw
+  capacity?: string; // e.g., '500GB', '1TB', '2TB'
+  isHighlyRecommended?: boolean;
 }
 
 export interface PCBuild {
@@ -73,15 +75,6 @@ export interface TutorialStep {
   type: 'assemble' | 'disassemble';
 }
 
-export interface Message {
-  role: 'user' | 'model';
-  text: string;
-  image?: {
-    data: string;
-    mimeType: string;
-  };
-}
-
 export interface Review {
   id: string;
   productId: string;
@@ -89,5 +82,47 @@ export interface Review {
   userName: string;
   rating: number;
   comment: string;
+  createdAt: string;
+}
+
+export interface FlashSale {
+  id: string;
+  message: string;
+  isActive: boolean;
+  productIds?: string[]; // IDs of products on sale
+  discountPercentage?: number; // Discount percentage (e.g., 20 for 20%)
+  expiresAt?: string;
+  createdAt: string;
+}
+
+export interface PreBuiltPC {
+  id: string;
+  name: string;
+  tier: 'Entry' | 'Mid' | 'High' | 'Extreme';
+  price: number;
+  image: string;
+  specs: {
+    cpu: string;
+    gpu: string;
+    ram: string;
+    storage: string;
+    motherboard?: string;
+    psu?: string;
+    case?: string;
+    cooling?: string;
+    monitor?: string;
+    peripherals?: string;
+    peripherals_2?: string;
+    peripherals_3?: string;
+  };
+  features: string[];
+  createdAt: string;
+}
+
+export interface AIMessage {
+  id: string;
+  userId: string;
+  role: 'user' | 'model';
+  content: string;
   createdAt: string;
 }

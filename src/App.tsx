@@ -3,22 +3,22 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Shop from './components/Shop';
 import Tutorial from './components/Tutorial';
-import Chatbot from './components/Chatbot';
 import Footer from './components/Footer';
 import PCBuilder from './components/PCBuilder';
 import Dashboard from './components/Dashboard';
 import MyBuilds from './components/MyBuilds';
 import MyOrders from './components/MyOrders';
-import AISupport from './components/AISupport';
+import PreBuilts from './components/PreBuilts';
 import AuthModal from './components/AuthModal';
+import AnnouncementBar from './components/AnnouncementBar';
+import AIAssistant from './components/AIAssistant';
 import { Product, PCBuild } from './types';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 
 function AppContent() {
   const { isAuthModalOpen, setAuthModalOpen } = useAuth();
-  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
   const [cart, setCart] = useState<Product[]>([]);
   const [editingBuild, setEditingBuild] = useState<PCBuild['components'] | undefined>(undefined);
@@ -27,8 +27,12 @@ function AppContent() {
     setCart(prev => [...prev, product]);
   };
 
-  const handleTabChange = (tab: string) => {
-    if (tab === 'builder') {
+  const handleTabChange = (tab: string, initialBuild?: PCBuild['components']) => {
+    if (initialBuild) {
+      setEditingBuild(initialBuild);
+    } else if (tab === 'builder' && activeTab !== 'builder') {
+      // Only clear if we're navigating TO builder without an initial build
+      // and we weren't already there (to avoid clearing when clicking builder tab while on it)
       setEditingBuild(undefined);
     }
     setActiveTab(tab);
@@ -37,21 +41,23 @@ function AppContent() {
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <Hero onStart={handleTabChange} />;
+        return <Hero onStart={(tab) => handleTabChange(tab)} />;
       case 'shop':
-        return <Shop onAddToCart={handleAddToCart} onNavigate={handleTabChange} cart={cart} setCart={setCart} />;
+        return <Shop onAddToCart={handleAddToCart} onNavigate={(tab) => handleTabChange(tab)} cart={cart} setCart={setCart} />;
       case 'builder':
-        return <PCBuilder onNavigate={handleTabChange} initialBuild={editingBuild} />;
+        return <PCBuilder onNavigate={(tab) => handleTabChange(tab)} initialBuild={editingBuild} />;
       case 'tutorial':
         return <Tutorial />;
-      case 'support':
-        return <AISupport />;
+      case 'pre-builts':
+        return <PreBuilts 
+          onNavigateToBuilder={(initialBuild) => handleTabChange('builder', initialBuild)} 
+          onAddToCart={handleAddToCart}
+        />;
       case 'dashboard':
         return <Dashboard />;
       case 'my-builds':
         return <MyBuilds onEdit={(build) => {
-          setEditingBuild(build.components);
-          setActiveTab('builder');
+          handleTabChange('builder', build.components);
         }} />;
       case 'my-orders':
         return <MyOrders />;
@@ -62,6 +68,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-white transition-colors duration-300 selection:bg-emerald-500/30 selection:text-emerald-500">
+      <AnnouncementBar />
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={handleTabChange} 
@@ -74,12 +81,12 @@ function AppContent() {
 
       <Footer />
 
-      <Chatbot />
-
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setAuthModalOpen(false)} 
       />
+      
+      <AIAssistant />
     </div>
   );
 }

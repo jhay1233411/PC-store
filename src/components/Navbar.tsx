@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Monitor, ShoppingCart, BookOpen, MessageSquare, Cpu, User, LogOut, LayoutDashboard, Hammer, Box, Sparkles, Package, Sun, Moon } from 'lucide-react';
+import { Monitor, ShoppingCart, BookOpen, MessageSquare, Cpu, User, LogOut, LayoutDashboard, Hammer, Box, Sparkles, Package } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,7 +17,6 @@ interface NavbarProps {
 
 export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarProps) {
   const { user, profile, setAuthModalOpen, signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
 
   const isAdminOrOwner = profile?.role === 'admin' || profile?.role === 'owner';
 
@@ -38,7 +36,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
 
   navItems.push(
     { id: 'tutorial', label: 'Video Guides', icon: BookOpen },
-    { id: 'support', label: 'AI Support', icon: Sparkles }
+    { id: 'pre-builts', label: 'Pre-Built PCs', icon: Monitor }
   );
 
   if (isAdminOrOwner) {
@@ -78,36 +76,6 @@ export default function Navbar({ activeTab, setActiveTab, cartCount }: NavbarPro
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={toggleTheme}
-            className="group relative p-2 text-zinc-500 dark:text-zinc-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all bg-zinc-100 dark:bg-white/5 rounded-xl border border-zinc-200 dark:border-white/10 active:scale-95 hover:shadow-lg hover:shadow-emerald-500/10"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            <AnimatePresence mode="wait">
-              {theme === 'dark' ? (
-                <motion.div
-                  key="sun"
-                  initial={{ scale: 0.5, opacity: 0, rotate: -90 }}
-                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                  exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Sun size={20} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="moon"
-                  initial={{ scale: 0.5, opacity: 0, rotate: -90 }}
-                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                  exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Moon size={20} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
-
           {user ? (
             <div className="flex items-center gap-4">
               <div className="hidden md:flex flex-col items-end">
